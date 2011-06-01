@@ -1,0 +1,7 @@
+name = Kovács Gábor Gyűjtemény admin theme
+description = Default admin theme for Kovács Gábor Gyűjtemény site
+base theme = seven
+core = 6.x
+
+stylesheets[all][] = css/base.less
+stylesheets[all][] = css/forms.less
