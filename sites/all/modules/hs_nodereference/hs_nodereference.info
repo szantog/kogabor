@@ -1,0 +1,14 @@
+; $Id: hs_nodereference.info,v 1.1 2009/11/05 05:18:21 jrao Exp $
+name = Hierarchical Select Node Reference
+description = Use Hierarchical Select as the widget for Node Reference CCK fields.
+dependencies[] = hierarchical_select 
+dependencies[] = nodereference
+package = Form Elements
+core = 6.x
+
+; Information added by drupal.org packaging script on 2010-10-04
+version = "6.x-1.0"
+core = "6.x"
+project = "hs_nodereference"
+datestamp = "1286162161"
+

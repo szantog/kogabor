@@ -1,0 +1,860 @@
+<?php
+// $Id: hs_nodereference.module,v 1.11 2010/10/04 03:09:21 jrao Exp $
+//require_once 'Log.php';
+/**
+ * @file
+ * Implementation of the Hierarchical Select API for the Node Reference
+ * module.
+ */
+/*
+Example
+-------
+Content Types:
+
+Country
+- Name
+
+State
+- Name
+- Country: Content types = Country, Required, Number of values = 1
+
+City
+- Name
+- State: Content types = State, Required, Number of values = 1
+
+Address
+- Street
+- City: Content types = City, Required, Number of values = 1
+
+Customer:
+- Name
+- Addresses: Content types = Address, Required, Number of values = 5
+
+Order:
+- ShippingAddress: Content types = Address, Required, Number of values = 1
+- Customer: Content types = Customer, Required, Number of values = 1
+- TaxZone: Content types = TaxZone, Required, Number of values = 1
+
+LineItem:
+- Order: Content types = Order, Required, Number of values = 1
+- Product: Content types = Product, Required, Number of values = 1
+- Amount
+
+Product:
+- Name
+- MadeBy: Content types = State or Country, Optional, Number of values = 1
+- Warehouse: Content types = Address, Required, Number of values = 1
+
+TaxZone:
+- Tax
+- Zone: Content types = Address or City or State or Country, Required, Number of values = 10
+
+
+Design
+------
+Hierarchy of node reference fields:
+- Each level in the hierarchy is [content type name] + [node reference field name]
+- Parent/child relationship is defined by referenced content types (and their own 
+  node reference fields) of a node reference field
+- The first level is the field where the widget is used
+- So for Order field of LineItem content type, it has following hierarchy:
+  - 0th level: LineItem.Order
+  - 1st level: Order.ShippingAddress, Order.Customer, Order.TaxZone
+  - 2nd level: 
+    - Address.City (child of Order.ShippingAddress)
+    - Customer.Addresses (child of Order.Customer)
+    - TaxZone.Zone (child of Order.TaxZone)
+  - 3rd level:
+    - City.State (child of Address.City and TaxZone.Zone(City))
+    - Address.City (child of Customer.Addresses and TaxZone.Zone(Address))
+    - State.Country (child of TaxZone.Zone(State))
+- Possible lineages in the field hierarchy:
+  - 1. LineItem.Order-Order.ShippingAddress-Address.City-City.State: Number of values = 1 
+      and single content types at all levels
+  - 2. Customer.Addresses-Address.City-City.State: Number of values > 1 at root
+    - This is used to test dropbox in node reference field widget
+  - 3. TaxZone.Zone-City.State-State.Country: Number of values > 1 & multiple content types at root
+    - This is used to test save lineage in node reference field widget
+  - 4. Product.MadeBy-State.Country: Number of values = 1 & multiple content types at root
+  - 5. Order.Customer-Customer.Addresses-Address.City-City.State: Number of values > 1 at non-root
+  - 6. Order.TaxZone-TaxZone.Zone-City.State-State.Country: Number of values > 1 & 
+      multiple content types at non-root
+    - When using this lineage as node reference field widget, it can only select tax zones 
+      containing a city
+    - Similarly when using this lineage as views filter, it can only filter zones containing a city
+    - TODO Current implementation can only select an item from the last level in the lineage, future
+      enhancement is needed to allow selection from middle levels
+  - 7. LineItem.Product-Product.MadeBy-State.Country: Number of values = 1 & multiple content types 
+      at non-root
+    - Similar to #6, when using this lineage as field widget/views filter, it can only select/filter 
+      products made by a state (not by country)
+Hierarchy of node reference values:
+- This hierarchy is the one we wanted in node reference widget
+- In order to define this hierarchy, admin must choose a path in node reference field hierarchy,
+  the path will define the levels in the node reference value hierarchy
+- Each level in the node reference value hierarchy is a list of referened nodes
+- The first level is the list of nodes for the last content type + node reference field in
+  the node reference field path
+- The 2nd deepest level is the list of nodes for the first content type + node reference field 
+  in the node reference type path
+- The deepest level is the node list for the field where the widget is used
+ */
+//----------------------------------------------------------------------------
+// Core hooks.
+
+/**
+ * Implementation of hook_menu().
+ */
+function hs_nodereference_menu() {
+  $items['admin/content/node-type/%/fields/%/hs_config_nodereference'] = array(
+    'title'            => 'Hierarchical Select Configuration',
+    'access arguments' => array('administer site configuration'),
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('hs_nodereference_config_form', 3, 5),
+    'type'             => MENU_NORMAL_ITEM,
+    'file'             => 'hs_nodereference.admin.inc',
+  );
+  // moved from hs_nodereference_views.module to this module, since 
+  // we may need to use it here for compatibility with VBO
+  $items['hs_nodereference_views_json/%views_ui_cache/%'] = array(
+    'page callback'   => 'hs_nodereference_views_json',
+    'page arguments'   => array(1, 2),
+    'type'            => MENU_CALLBACK,
+    // TODO: Needs improvements. Ideally, this would inherit the permissions
+    // of the form the Hierarchical Select was in.
+    'access callback' => TRUE,
+  );  
+  return $items;
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function hs_nodereference_theme() {
+  return array(
+    'hs_nodereference_formatter_hs_lineages_default' => array(
+      'file'      => 'includes/theme.inc',
+      'arguments' => array('element'),
+      'function' => 'theme_hs_nodereference_formatter_hs_lineages',
+    ),  
+    'hs_nodereference_formatter_hs_lineages_plain' => array(
+      'file'      => 'includes/theme.inc',
+      'arguments' => array('element'),
+      'function' => 'theme_hs_nodereference_formatter_hs_lineages',
+    ),     
+    'hs_nodereference_selection_as_lineages' => array(
+      'file'      => 'includes/theme.inc',
+      'arguments' => array(
+        'node' => NULL,
+        'field_name'    => NULL,
+        'render_link'   => 1,
+      ),
+    ),
+    'hs_nodereference_lineages' => array(
+      'file'      => 'includes/theme.inc',
+      'arguments' => array(
+        'node' => NULL,
+        'field'    => NULL,    
+        'lineages'    => NULL,
+        'render_link'   => 1,
+      ),
+    ),    
+    'hs_nodereference_lineage' => array(
+      'file'      => 'includes/theme.inc',
+      'arguments' => array( 
+        'id' => NULL,
+        'lineage'    => NULL,
+        'render_link'   => 1,
+      ),
+    ),    
+  );
+}
+
+//----------------------------------------------------------------------------
+// Menu system callbacks.
+
+
+/**
+ * Menu callback; wrapper around hierarchical_select_json, with support for
+ * preloading the view thats is referenced from within the form. 
+ * This is moved from hs_nodereference_view.module to this module since 
+ * we may need to use it in here for integration with VBO
+ *
+ * @param $view
+ *   The view to load.
+ * @param $display_id
+ *   The ID of a display to execute.
+ */
+function hs_nodereference_views_json($view, $display_id) {
+//TODO find out why the following error occurs during preview ajax when view is not saved
+// after this filter is added
+// PHP Fatal error:  views_exposed_form() [<a href='function.views-exposed-form'>function.views-exposed-form</a>]: The script tried to execute a method or access a property of an incomplete object. Please ensure that the class definition &quot;hs_nodereference_handler_filter_many_to_one&quot; of the object you are trying to operate on was loaded _before_ unserialize() gets called or provide a __autoload() function to load the class definition  in sites\all\modules\views\views.module on line 964
+
+  if ($view != NULL) {
+    $view->validate(); //TODO handle errors returned
+    $view->preview($display_id);
+  }
+
+  return hierarchical_select_json(); //TODO: clear all messages generated during ajax
+  //TODO: find out the cause of error "Missing argument 2 for drupal_retrieve_form() in E:\Projects\ERA\Drupal\source\drupal\includes\form.inc on line 325" when using ajax after returned to the form via cancel
+}
+
+//----------------------------------------------------------------------------
+// CCK hooks.
+
+/**
+ * Implementation of hook_field_formatter_info().
+ */
+function hs_nodereference_field_formatter_info() {
+  return array(
+    'hs_lineages_default' => array(
+      'label' => t('Hierarchical Select lineages (link)'),
+      'field types' => array('nodereference'),
+      'multiple values' => CONTENT_HANDLE_MODULE,
+    ),
+    'hs_lineages_plain' => array(
+      'label' => t('Hierarchical Select lineages (no link)'),
+      'field types' => array('nodereference'),
+      'multiple values' => CONTENT_HANDLE_MODULE,
+    ),    
+  );
+}
+
+/**
+ * Implementation of hook_widget_info().
+ */
+function hs_nodereference_widget_info() {
+  return array(
+    'nodereference_hs' => array(
+      'label'       => 'Hierarchical Select',
+      'field types' => array('nodereference'),
+      // Set multiple settings to be handled by widget rather than by CCK itself
+      'multiple values' => CONTENT_HANDLE_MODULE,
+      // No default value callback for this widget
+      'callbacks' => array('default value' => CONTENT_CALLBACK_NONE),
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_widget_settings().
+ */
+/*
+- A UI is needed to pick a path in the hierarchy of node reference fields, this UI
+  resides in the widget settings
+- The UI will use HS to represent node reference field hierarchy, the mapping to HS is:
+  - item: A node reference field in a content type, expressed as [content type] + '.' + 
+    [field name]
+    - We'll prepend ancestors to get a unique item
+    - This node reference field's content type and field name is also prefixed to the item
+  - item unicity: Content type + node reference field name
+  - label: Content type name + '.' + node reference field label
+  - level: Referenced content types of a node reference field
+    - root: This node reference field's referenced content types
+  - item type: Referenced content type names of a node reference field
+  - entity: N/A
+ */
+function hs_nodereference_widget_settings($op, $widget) {
+  switch ($op) {
+    case 'form':
+      $form = array();
+      list($content_type, $field_name) = _hs_nodereference_get_widget_typefield();
+      $url = 'admin/content/node-type/'. $content_type .'/fields/'. $field_name .'/hs_config_nodereference';
+      $form['nodereference_path'] = array(
+        '#type' => 'hierarchical_select',
+        '#title' => t('Node reference path'),
+        '#size' => 1,
+        '#config' => array(
+          'module' => 'hs_nodereference',
+          'params' => array(
+            'nodereference_path' => FALSE,
+            'type_name' => $content_type,
+            'field_name' => $field_name,
+          ),
+          // Since each item has ancestors prepended, we already have the lineage 
+          // in item, no need to save it explicitly.
+          'save_lineage'    => 0,
+          // Admin needs to decide where to stop
+          'enforce_deepest' => 0, 
+          'entity_count'    => 0,
+          'require_entity'  => 0,
+          'resizable'       => 0,
+          // There're no easy way to label the levels
+          'level_labels' => array(
+            'status' => 0,
+          ),
+          // Does not support dropbox (Cannot have multiple paths in the field 
+          // hierarchy, otherwise the value HS will not know how to display) 
+          'dropbox' => array(
+            'status'   => 0,
+          ),
+          // Doesn't make sense for this display
+          'editability' => array(
+            'status'   => 0,
+          ),
+          // These settings cannot be configured through the UI: they can only be
+          // overridden through code.
+          'animation_delay'    => 400,
+          'special_items'      => array(),
+          'render_flat_select' => 0,
+          'path'               => 'hierarchical_select_json',
+        ),      
+        '#default_value' => isset($widget['nodereference_path']) ? $widget['nodereference_path'] : array(),
+        '#description' => t(
+          "Select the node reference path, please make sure <b>Content types that can be referenced</b> 
+          is selected and saved first. Due to limitations of CCK, there is a separate form to <a href='!url'>
+          configure this Hierarchical Select widget's settings.</a>", array('!url' => url($url))
+        ),
+      );
+      return $form;
+
+    case 'save':
+      return array('nodereference_path');
+  }
+}
+
+/**
+ * Implementation of hook_widget().
+ */
+/*
+Mapping of Node Reference to HS:
+- item: A node whose content type is linked by Node Reference to other content type
+  - In code, item is node id
+- label: Node title
+- item type: 
+  - Child item at the last level: Node's content type name
+  - Other item: Label of child node's node reference to this parent
+- entity: N/A
+ */
+function hs_nodereference_widget(&$form, &$form_state, $field, $items, $delta = 0) {
+  $content_type = $field['type_name'];
+  $field_name = $field['field_name'];
+  module_load_include('inc', 'hierarchical_select', 'includes/common');
+  $node = &$form['#node'];
+  foreach ($items as $item) {
+    $selected_items[] = $item['nid'];
+  }
+  $form[$field_name]['#tree'] = TRUE;
+  $form[$field_name]['#weight'] = $field['widget']['weight'];
+  $form[$field_name]['nid'] = array(
+    '#title' => $field['widget']['label'],
+    '#type' => 'hierarchical_select',
+    '#weight' => $field['widget']['weight'],
+    '#config' => array(
+      'module' => 'hs_nodereference',
+      'params' => array(
+        'nodereference_path' => $field['widget']['nodereference_path'],
+        'type_name' => $content_type,
+        'field_name' => $field_name,  
+      ),
+    ),
+    '#required' => $field['required'],
+    '#description' => t($field['widget']['description']),
+    '#default_value' => !empty($selected_items) ? array_values($selected_items) : array(),
+    '#element_validate' => array('nodereference_hs_validate'),
+  );
+  unset($form[$field_name]['#options']); // Unset to prevent passing around of possibly huge HTML.
+  unset($form[$field_name]['#theme']);   // Unset to prevent theme_taxonomy_term_select() from running.
+  
+  // check if widget is used in views, change ajax path if it is
+  $defaults_override = array();
+  if (module_exists('views')) {
+    $view = views_get_current_view();
+    if ($view) {
+      $display_id = $view->current_display;
+      $defaults_override['path'] = "hs_nodereference_views_json/$view->name/$display_id";     
+    }
+  } 
+
+  hierarchical_select_common_config_apply($form[$field_name]['nid'], 
+    "nodereference-$content_type.$field_name", $defaults_override);
+  return $form;
+}
+
+function nodereference_hs_validate($element, &$form_state) {
+  $field_name = $element['#config']['params']['field_name'];
+  if (is_array($form_state['values'][$field_name]['nid'])) {
+    foreach ($form_state['values'][$field_name]['nid'] as $nid) {
+      array_unshift($form_state['values'][$field_name], array('nid' => $nid));
+    }
+  }
+  else {
+    array_unshift($form_state['values'][$field_name], array('nid' => $form_state['values'][$field_name]['nid']));
+  }  
+}
+
+//----------------------------------------------------------------------------
+// Hierarchical Select hooks.
+
+/**
+ * Implementation of hook_hierarchical_select_params().
+ */
+function hs_nodereference_hierarchical_select_params() {
+  $params = array(
+    // Node reference path formatted as 'video.field_team-team.field_league', 
+    // this is only used for value hierarchy.
+    'nodereference_path', 
+    // The machine name of the content type which contains the node reference 
+    // field we're building HS widget for, this is only used for HS display 
+    // of node reference field hierarchy.
+    'type_name', 
+    // The name of the node reference field we're building HS widget for, 
+    //used for field hierarchy. 
+    'field_name', 
+  );
+  return $params;
+}
+
+/**
+ * Implementation of hook_hierarchical_select_root_level().
+ */
+function hs_nodereference_hierarchical_select_root_level($params) {
+  if (!$params['nodereference_path']) { // field hierarchy
+    $parent = $params['type_name'] . '.' . $params['field_name'];    
+    return hs_nodereference_hierarchical_select_children($parent, $params);    
+  }
+  else { // value hierarchy
+    $root_field = _hs_nodereference_get_root_field_from_path($params['nodereference_path']);
+    /* Special handling if root field is using hs_nodereference: root is special since unlike
+       others in the node reference path, it does not have a type to constraint it. It's only
+       a field, thus can reference multiple types. This might be intentional, in which case
+       we don't need to do anything special; it could also be the root field is using this
+       module and save lineage is turned on, in which case we should constraint the type using
+       the information in the root field's node reference path.
+    */
+    if ($root_field['multiple'] > 1 && $root_field['widget']['type'] == 'nodereference_hs') {
+      // 
+      $nodereference_typefields = explode('-', $root_field['widget']['nodereference_path']);
+      if (count($nodereference_typefields) > 1) {
+        // type constraint will only work if there're more than one field in root field's
+        // node reference path 
+        list($second_to_last_type_name, $second_to_last_field_name) = explode('.', $nodereference_typefields[1]);      
+        // Get root nodes, revised from the sql from nodereferer.module  
+        $filter_nodetypes = "AND n.type = '" . $second_to_last_type_name . "'";
+        $order = 'n.title ASC';
+        $query = "SELECT       n.nid
+                  FROM         {node} n
+                  WHERE        n.status = 1 " . $filter_nodetypes . "
+                  ORDER BY     " . $order;    
+        $result = db_query(db_rewrite_sql($query));
+        $ids = array();
+        while ($value = db_fetch_array($result)) {
+          $ids[] = $value['nid'];
+        }    
+        // avoid duplicate referrers by using nid as key
+        $ids = array_unique($ids);
+        if (count($ids) == 0) {
+          return array(); // if no root ids are found
+        }    
+        $references = _nodereference_potential_references($root_field, '', 'contains', $ids);        
+      }
+      else {
+        $references = _nodereference_potential_references($root_field);
+      }
+    }
+    else {
+      $references = _nodereference_potential_references($root_field);
+    }
+
+    $root = array();
+    foreach ($references as $nid => $value) {
+      $root[$nid] = $value['title'];
+    }
+    return $root;
+  }
+}
+
+/**
+ * Implementation of hook_hierarchical_select_children().
+ */
+function hs_nodereference_hierarchical_select_children($parent, $params) {
+  if (!$params['nodereference_path']) { // field hierarchy
+    $lineage = explode('-', $parent);
+    $type_names_in_lineage = array_map('_hs_nodereference_field_lineage_item_get_type', $lineage);
+    list($parent_type_name, $parent_field_name) = explode('.', end($lineage));
+    $parent_field = content_fields($parent_field_name, $parent_type_name);
+    $children = array();
+    if (is_array($parent_field['referenceable_types'])) {
+      foreach (array_filter($parent_field['referenceable_types']) as $parent_referenced_type) {
+        if (in_array($parent_referenced_type, $type_names_in_lineage)) {
+          continue; // avoid cycles
+        }
+        $type = content_types($parent_referenced_type);
+        foreach ($type['fields'] as $field_name => $field) {
+          if ($field['type'] === 'nodereference') {
+            foreach (array_filter($field['referenceable_types']) as $referenced_type) {
+              if (!in_array($referenced_type, $type_names_in_lineage)) { // avoid cycles
+                $item = $parent . '-' . $field['type_name'] . '.' . $field['field_name'];
+                $label = $type['name'] . '.' . $field['widget']['label'];
+                $children[$item] = $label;     
+                break;           
+              }
+            }
+          }
+        }
+      }
+    }           
+    return $children;    
+  }
+  else { // value hierarchy
+    $node = node_load($parent);
+    $nodereference_typefields = explode('-', $params['nodereference_path']);
+    list($last_type_name, $last_field_name) = explode('.', $nodereference_typefields[0]);
+    $field = _hs_nodereference_get_field_from_path($params['nodereference_path'], $node);
+    if (!$field) {
+      return array();
+    }
+    // No more children if we're in the last level
+    if ($field['type_name'] == $last_type_name && $field['field_name'] == $last_field_name) {
+      return array(); 
+    }
+    $next_field = _hs_nodereference_get_next_field_from_path($params['nodereference_path'], $field);
+    if (!$next_field) {
+      return array();
+    }
+    // Get related nodes, copied from nodereferer.module  
+    $db_info = content_database_info($field);
+    $filter_nodetypes = "AND n.type = '" . $field['type_name'] . "'";
+    $order = 'n.title ASC';
+    $query = "SELECT       n.nid
+              FROM         {" . $db_info['table'] . "} nr
+              INNER JOIN   {node} n ON n.vid = nr.vid AND n.status = 1 " . $filter_nodetypes . "
+              WHERE        nr." . $db_info['columns']['nid']['column'] . " = %d
+              ORDER BY     " . $order;    
+    $result = db_query(db_rewrite_sql($query), $parent);
+    $ids = array();
+    while ($value = db_fetch_array($result)) {
+      $ids[] = $value['nid'];
+    }    
+    // avoid duplicate referrers by using nid as key
+    $ids = array_unique($ids);
+    if (count($ids) == 0) {
+      return array(); // if no referrer ids are found, there is no children
+    }
+    
+    // Use next referenced field to populate children, so the admin can use views there
+    // to limit the children, logic is similar to hs_nodereference_hierarchical_select_root_level
+    $references = _nodereference_potential_references($next_field, '', 'contains', $ids);
+    $children = array();
+    foreach ($references as $nid => $value) {
+      $children[$nid] = $value['title'];
+    }
+    return $children;
+  }
+}
+
+/**
+ * Implementation of hook_hierarchical_select_lineage().
+ */
+function hs_nodereference_hierarchical_select_lineage($item, $params) {
+  if (!$params['nodereference_path']) { // field hierarchy
+    $result = array();
+    $lineage = explode('-', $item);
+    foreach ($lineage as $i) {
+      if (empty($result)) {
+        $result[] = $i;
+      }
+      else {
+        $previous = end($result);
+        $result[] = $previous . '-' . $i;
+      }
+    }
+    array_shift($result); // first element is current content type and field, not part of the hierarchy 
+    return $result;
+  }
+  else { // value hierarchy
+    $lineage = array($item);
+    $node = node_load($item);
+    $field = _hs_nodereference_get_field_from_path($params['nodereference_path'], $node);
+    if (!$field) {
+      return $lineage;
+    }
+    $nodereference_typefields = explode('-', $params['nodereference_path']);
+    $is_lineage = FALSE;
+    foreach ($nodereference_typefields as $typefield) {
+      list($type, $field_name) = explode('.', $typefield);
+      if ($type == $field['type_name'] && $field_name == $field['field_name']) {
+        $is_lineage = TRUE;
+        continue;
+      }
+      if ($is_lineage) {
+        $nids = $node->$field_name;
+        $nid = $nids[0]['nid']; // here we assume field is not multiple
+        array_unshift($lineage, $nid);
+        $node = node_load($nid);
+      } 
+    }        
+    return $lineage;
+  }
+}
+
+/**
+ * Implementation of hook_hierarchical_select_valid_item().
+ */
+function hs_nodereference_hierarchical_select_valid_item($item, $params) {
+  if (!$params['nodereference_path']) { // field hierarchy
+    $lineage = explode('-', $item);
+    list($type_name, $field_name) = explode('.', end($lineage));
+    $types = content_types();
+    if (!array_key_exists($type_name, $types)) {
+      return FALSE;
+    }
+    if (!array_key_exists($field_name, $types[$type_name]['fields'])) {
+      return FALSE;
+    }
+    return $types[$type_name]['fields'][$field_name]['type'] === 'nodereference';    
+
+  }
+  else { // value hierarchy
+    $node = node_load($item);
+    $field = _hs_nodereference_get_field_from_path($params['nodereference_path'], $node);
+    return $field;
+  }
+}
+
+/**
+ * Implementation of hook_hierarchical_select_item_get_label().
+ */
+function hs_nodereference_hierarchical_select_item_get_label($item, $params) {
+  if (!$params['nodereference_path']) { // field hierarchy
+    return ''; // field hierarchy doesn't use dropbox, no need to implement this
+  }
+  else { // value hierarchy
+    $node = node_load($item);
+    return $node->title;
+  }
+}
+
+/**
+ * Implementation of hook_hierarchical_select_create_item().
+ */
+function hs_nodereference_hierarchical_select_create_item($label, $parent, $params) {
+  if (!$params['nodereference_path']) { // field hierarchy
+    return NULL; // field hierarchy doesn't use create item, no need to implement this
+  }
+  else { // value hierarchy
+    if (empty($parent)) { // create root item
+      $root_field = _hs_nodereference_get_root_field_from_path($params['nodereference_path']);
+      if (empty($root_field['referenceable_types'])) {
+        return NULL;
+      }
+      $referenceable_types = array_values(array_filter($root_field['referenceable_types']));    
+      if (empty($referenceable_types)) {
+        return NULL;
+      }
+      $type = $referenceable_types[0];     
+    }
+    else { // create non-root item
+      $parent_node = node_load($parent);
+      $field = _hs_nodereference_get_field_from_path($params['nodereference_path'], $parent_node);
+      if (!$field) {
+        return NULL;
+      }
+      $type = $field['type_name'];
+    }
+
+    // insert new node, based on http://drupal.org/node/439090
+    module_load_include('inc', 'node', 'node.pages'); // required
+    $node = array('type' => $type);
+    $form_state = array();
+    $form_state['values']['title'] = $label; // node's title
+    if (!empty($parent)) { 
+      $form_state['values'][$field['field_name']]['nid']['nid'] = $parent;
+    }
+
+    $form_state['values']['op'] = t('Save'); // required value
+    $form_id = $type . '_node_form';
+    // copied from drupal_execute(), we need to do some tricky stuff with after build 
+    $form = drupal_retrieve_form($form_id, $form_state, (object)$node);   
+    $form['#post'] = $form_state['values'];
+    drupal_prepare_form($form_id, $form, $form_state);  
+    // TRICKY: if the form for this new node is already using HS, we don't want
+    // its after build to run otherwise it will mess up the storage
+    if (!empty($form['#after_build'])) {
+      foreach ($form['#after_build'] as $i => $after_build) {
+        if ($after_build == 'hierarchical_select_after_build') {
+          unset($form['#after_build'][$i]);
+        }
+      } 
+    }  
+    drupal_process_form($form_id, $form, $form_state);    
+
+    return $form_state['nid'];
+  }
+}
+
+
+/**
+ * Implementation of hook_hierarchical_select_entity_count().
+ */
+/*
+function hs_nodereference_hierarchical_select_entity_count($item, $params) {
+  return 0;
+}
+ */
+
+/**
+ * Implementation of hook_hierarchical_select_implementation_info().
+ */
+function hs_nodereference_hierarchical_select_implementation_info() {
+  return array(
+    'hierarchy type' => t('Node Reference'),
+    'entity type'    => t('N/A'),
+  );
+}
+
+/**
+ * Implementation of hook_hierarchical_select_config_info().
+ */
+function hs_nodereference_hierarchical_select_config_info() {
+  static $config_info;
+
+  if (!isset($config_info)) {
+    $config_info = array();
+
+    $content_types = content_types();
+    $fields = content_fields();
+
+    foreach ($fields as $field_name => $field) {
+      if ($field['type'] == 'nodereference') {
+        foreach ($content_types as $content_type_name => $content_type) {
+          if (isset($content_type['fields'][$field_name]) && $content_type['fields'][$field_name]['widget']['type'] == 'nodereference_hs') {
+            $config_id = "nodereference-$content_type_name.$field_name";
+            $config_info["$config_id"] = array(
+              'config_id'      => $config_id,
+              'hierarchy type' => t('Node Reference'),
+              'hierarchy'      => t($content_type['name']) . ' -> ' . $content_type['fields'][$field_name]['widget']['label'],
+              'entity type'    => t('N/A'),
+              'entity'         => t('N/A'),
+              'context type'   => t('Node form'),
+              'context'        => '',
+              'edit link'      => "admin/content/node-type/$content_type_name/fields/$field_name/hs_config_nodereference",
+            );
+          }
+        }
+      }
+    }
+  }
+  return  $config_info;
+}
+
+
+//----------------------------------------------------------------------------
+// Private functions.
+
+/**
+ * Get the content type and the field name for this widget
+ *
+ * @return
+ *   - FALSE if no typefield could be found
+ *   - array($content_type, $field_name) otherwise
+ */
+function _hs_nodereference_get_widget_typefield() {
+  if (arg(0) == 'admin' && arg(1) == 'content' && arg(2) == 'node-type') {
+    // this part is copied from hs_content_taxonomy.module's _hs_content_taxonomy_parse_context_from_url
+    $content_type = content_types(arg(3));
+    $field_name = arg(5);
+    if (arg(4) == 'fields' && !empty($field_name) && isset($content_type['fields'][$field_name])) {
+      if ($content_type['fields'][$field_name]['type'] == 'nodereference' && $content_type['fields'][$field_name]['widget']['type'] == 'nodereference_hs') {
+        return array($content_type['type'], $field_name);
+      }
+    }
+  }
+  else if (arg(0) == 'hierarchical_select_json') {
+    // copied from hierarchical_select_json(), get content type and field name from form parameters in json cache
+    $hs_form_build_id = $_POST['hs_form_build_id'];
+    $cached = cache_get($hs_form_build_id, 'cache');
+    $storage = $cached->data;    
+    $form_id = $_POST['form_id'] = $storage['parameters'][0];
+    if ($form_id == 'content_field_edit_form') {
+      return array($storage['parameters'][2], $storage['parameters'][3]);
+    }
+  }
+
+  return FALSE;
+}
+/**
+ * Find a node's corresponding node reference field in the node reference path
+ * @return
+ *   - FALSE if no field could be found
+ *   - field array loaded by content_fields otherwise
+ */
+function _hs_nodereference_get_field_from_path($nodereference_path, $node) {
+  if (empty($nodereference_path)) {
+    return FALSE;
+  }
+  $nodereference_typefields = explode('-', $nodereference_path);
+  $nodereference_typefields = array_reverse($nodereference_typefields);
+  foreach ($nodereference_typefields as $typefield) {
+    list($type, $field_name) = explode('.', $typefield);
+    $field = content_fields($field_name, $type);
+    if (in_array($node->type, array_filter($field['referenceable_types']))) {
+      return $field;
+    }
+  }
+  return FALSE;
+}
+/**
+ * Find root node reference field in the node reference path
+ * @return
+ *   - FALSE if no field could be found
+ *   - field array loaded by content_fields otherwise
+ */
+function _hs_nodereference_get_root_field_from_path($nodereference_path) {
+  if (empty($nodereference_path)) {
+    return FALSE;
+  }
+  $nodereference_typefields = explode('-', $nodereference_path);
+  list($root_type_name, $root_field_name) = explode('.', end($nodereference_typefields));
+  return content_fields($root_field_name, $root_type_name);
+}
+/**
+ * Give a field, find the next field in the node reference path
+ * @return 
+ *   - FALSE if no field could be found
+ *   - field array loaded by content_fields otherwise
+ */
+function _hs_nodereference_get_next_field_from_path($nodereference_path, $field) {
+  $nodereference_typefields = explode('-', $nodereference_path);
+  $next_field = NULL;
+  foreach ($nodereference_typefields as $typefield) {
+    list($type, $field_name) = explode('.', $typefield);
+    if ($type == $field['type_name'] && $field_name == $field['field_name']) {
+      return $next_field;
+    }
+    $next_field = content_fields($field_name, $type);
+  }
+  return NULL;
+}
+/**
+ * Helper function needed for the array_map() call to get type names from
+ * node reference field hierarchy
+ *
+ * @param $item
+ *   An item in a dropbox lineage.
+ * @return
+ *   The value associated with the "value" key of the item.
+ */
+function _hs_nodereference_field_lineage_item_get_type($item) {
+  list($type_name, $field_name) = explode('.', $item);
+  return $type_name;
+}
+
+/**
+ * Get level labels
+ * @param $nodereference_path
+ * @return array of level labels
+ */
+function _hs_nodereference_get_level_labels_from_path($nodereference_path) {
+  if (empty($nodereference_path)) {
+    return array();
+  }
+  $nodereference_typefields = explode('-', $nodereference_path);
+  $labels = array();
+  foreach ($nodereference_typefields as $typefield) {
+    list($type, $field_name) = explode('.', $typefield);
+    $field = content_fields($field_name, $type);
+    array_unshift($labels, t($field['widget']['label']));
+  }
+  return $labels;
+}

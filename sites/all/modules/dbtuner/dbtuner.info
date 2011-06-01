@@ -1,0 +1,13 @@
+; $Id: dbtuner.info,v 1.1 2010/04/03 20:09:21 mikeytown2 Exp $
+name = DB Tuner
+description = Adds indexes to CCK fields used in views & more.
+core = 6.x
+package = Performance and scalability
+recommends[] = views
+
+; Information added by drupal.org packaging script on 2010-05-12
+version = "6.x-1.0-alpha2"
+core = "6.x"
+project = "dbtuner"
+datestamp = "1273701904"
+

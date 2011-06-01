@@ -1,0 +1,508 @@
+<?php
+// $Id: hs_nodereference_views.module,v 1.3 2010/04/11 06:58:25 jrao Exp $
+//require_once 'Log.php';
+/**
+ * @file
+ * Implementation of the Hierarchical Select API for the Node reference module's
+ * Views exposed filters.
+ */
+
+
+define('HS_NODEREFERENCE_VIEWS_ANY_OPTION', 'Any');
+
+
+//----------------------------------------------------------------------------
+// Core hooks.
+
+/**
+ * Implementation of hook_menu().
+ */
+function hs_nodereference_views_menu() {
+  $items = array();
+
+  $items["admin/build/views/hs_config_nodereference/%views_ui_cache/%/%"] = array(
+    'title'            => 'Hierarchical Select configuration',
+    'title callback'   => 'hs_nodereference_views_config_title',
+    'title arguments'  => array(4, 5, 6),
+    'page callback'    => 'hs_nodereference_views_config',
+    'page arguments'   => array(4, 5, 6),
+    'access arguments' => array('administer views'),
+    'type'             => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function hs_nodereference_views_form_alter(&$form, $form_state, $form_id) {
+  // 
+  if ($form_id == 'views_ui_edit_view_form') {
+    // Add JS and CSS required for Hierarchical Select to work.
+    _hierarchical_select_setup_js();
+
+    // Ensure that Drupal.HierarchicalSelect.prepareGETSubmit() gets called.
+    module_load_include('inc', 'hierarchical_select', 'includes/common');
+    hierarchical_select_common_add_views_js();
+  }
+  // Allow admin to change operator when Save Lineage is turned on if they know what they're doing
+  /* 
+  if ($form_id == 'views_ui_config_item_form'
+      && $form_state['type'] == 'filter'
+      && get_class($form_state['handler']) == 'hs_nodereference_handler_filter_many_to_one')
+  {
+    module_load_include('inc', 'hierarchical_select', 'includes/common');
+
+    $view_name  = $form_state['view']->name;
+    $filter_id  = $form_state['id'];
+    $display_id = _hs_nodereference_views_get_display_id_for_filter($form_state['view'], $filter_id);
+    $filter = _hs_nodereference_views_get_filter($form_state['view'], $display_id, $filter_id);
+
+    if($filter['type'] == 'hierarchical_select') {
+      $config_id = "nodereference-views-$view_name-$display_id-$filter_id";
+      $config    = hierarchical_select_common_config_get($config_id);
+  
+      if ($config['save_lineage']) {
+        $description = t("Managed by Hierarchical Select because the 'Save lineage' setting is enabled.");
+        // "Operator"
+        $form['options']['operator']['#disabled'] = TRUE;
+        $form['options']['operator']['#description'] = $description;
+        // "Unlock operator"
+        $form['options']['expose']['use_operator']['#disabled'] = TRUE;
+        $form['options']['expose']['use_operator']['#description'] = $description;
+        // "Operator identifier"
+        $form['options']['expose']['operator']['#disabled'] = TRUE;
+        $form['options']['expose']['operator']['#description'] = $description;
+      }      
+    }
+  }
+  */
+}
+
+//----------------------------------------------------------------------------
+// Menu system callbacks.
+
+/**
+ * Title callback; Hierarchical Select configuration form page.
+ *
+ * @param $view
+ *   A view object.
+ * @param $display_id
+ *   The ID of a display within the given view object.
+ * @param $filter_id
+ *   The ID of a filter used within the given view object.
+ */
+function hs_nodereference_views_config_title($view, $display_id, $filter_id) {
+  $filter_label = _hs_nodereference_views_get_filter_label($view, $display_id, $filter_id);
+  return t("Hierarchical Select configuration for the '!filter-id' filter in
+            the '!view-name' view's '!display-id' display",
+            array(
+              '!view-name'  => $view->name,
+              '!display-id' => $display_id,
+              '!filter-id'  => $filter_label,
+            )
+          );
+}
+
+/**
+ * Menu callback; Hierarchical Select configuration form page.
+ *
+ * When the given filter id doesn't exist, a 404 page is displayed.
+ *
+ * @param $view
+ *   A view object.
+ * @param $display_id
+ *   The ID of a display within the given view object.
+ * @param $filter_id
+ *   The ID of a filter used within the given view object.
+ */
+function hs_nodereference_views_config($view, $display_id, $filter_id) {
+  $filter = _hs_nodereference_views_get_filter($view, $display_id, $filter_id);
+  if ($filter == FALSE) {
+    drupal_not_found();
+  }
+  else {
+    views_set_current_view($view);
+    return drupal_get_form('hs_nodereference_views_config_form', $view, $display_id, $filter_id);
+  }
+}
+
+
+//----------------------------------------------------------------------------
+// Views hooks.
+
+/**
+ * Implementation of hook_views_api().
+ */
+function hs_nodereference_views_views_api() {
+  return array(
+    'api' => 2,
+  );
+}
+
+/**
+ * Implementation of hook_views_handlers().
+ */
+function hs_nodereference_views_views_handlers() {
+  return array(
+    'handlers' => array(
+      // Provide a subclass of the many to one filter handler, to make it possible to
+      // use Hierarchical Select in Views.
+      'hs_nodereference_handler_filter_many_to_one' => array(
+        'parent' => 'content_handler_filter_many_to_one',
+      ),
+    )
+  );
+}
+
+/**
+ * Implementation of hook_views_data_alter().
+ */
+function hs_nodereference_views_views_data_alter(&$data) {
+  // get a list of node reference fields using HS widget
+  $fields = content_fields();
+  foreach ($fields as $field_name => $field) {
+    if ($field['type'] == 'nodereference') {
+      $table_alias = content_views_tablename($field);
+      // Filter: swap the handler to hs_nodereference handler.
+      $data[$table_alias][$field['field_name'] .'_nid']['filter']['handler'] = 'hs_nodereference_handler_filter_many_to_one';
+    }
+  }  
+}
+
+
+//----------------------------------------------------------------------------
+// Forms API callbacks.
+
+/**
+ * Form definition; configuration form for Hierarchical Select as the widget
+ * for a node reference filter.
+ *
+ * @param $view
+ *   A view object.
+ * @param $display_id
+ *   The ID of a display within the given view object.
+ * @param $filter_id
+ *   The ID of a filter used within the given view object.
+ */
+function hs_nodereference_views_config_form($form_state, $view, $display_id, $filter_id) {
+  module_load_include('inc', 'hierarchical_select', 'includes/common');
+
+  $filter = _hs_nodereference_views_get_filter($view, $display_id, $filter_id);
+  $labels = _hs_nodereference_get_level_labels_from_path($filter['nodereference_path']);
+  
+  // Build the config ID.
+  $config_id = "nodereference-views-$view->name-$display_id-$filter_id";
+
+  // Add the Hierarchical Select config form.
+  $module = 'hs_nodereference_views';
+  $params = array(
+    'optional'    => (bool) $filter['expose']['optional'],
+    'filter_id'   => $filter_id,
+    'nodereference_path'         => FALSE,
+  );
+  $defaults = array(
+    'save_lineage' => 0,
+    'enforce_deepest' => 1,
+    'entity_count'    => 0,
+    'require_entity'  => 0,  
+    'level_labels' => array(
+        'status' => 1,
+        'labels' => $labels,
+    ),  
+    'editability' => array(
+      'status'     => 0,
+    ),  
+    // Use our custom callback.
+    'path' => "hs_nodereference_views_json/$view->name/$display_id",
+    // When the 'Any' option is selected, nothing else should be and it
+    // should replace the '<none>' option.
+    'special_items' => array(
+      HS_NODEREFERENCE_VIEWS_ANY_OPTION => array('none', 'exclusive'),
+    ),
+  );
+  $strings = array(
+    'hierarchy'   => t('node reference path'),
+    'hierarchies' => t('node reference paths'),
+    'item'        => t('node'),
+    'items'       => t('nodes'),
+    'item_type'   => t('node reference'),
+  );
+  $max_hierarchy_depth = count($labels) - 1;
+  $preview_is_required = !(bool)$exposed_filter['expose']['optional'];
+  $form['hierarchical_select_config'] = hierarchical_select_common_config_form($module, $params, $config_id, $defaults, $strings, $max_hierarchy_depth, $preview_is_required);
+
+  $form['link'] = array(
+    '#value' => l("Back to the View's display configuration", "admin/build/views/edit/$view->name", array('fragment' => 'views-tab-' . $display_id)),
+    '#prefix' => '<div class="hierarchical-select-config-back-link">',
+    '#suffix' => '</div>',
+    '#weight' => -5,
+  );
+
+  $form['save'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+  );
+
+  // Add the custom submit handler for the Hierarchical Select config form
+  // that will update the View object when necessary.
+  $form['#submit'][] = 'hs_nodereference_views_common_config_form_submit';
+  $form['#custom_submit_data'] = array(
+    'view_name'  => $view->name,
+    'display_id' => $display_id,
+    'filter_id'  => $filter_id,
+  );
+
+  // Add the submit handler for the Hierarchical Select config form.
+  $parents = array('hierarchical_select_config');
+  $form['#submit'][] = 'hierarchical_select_common_config_form_submit';
+  $form['#hs_common_config_form_parents'] = $parents;
+
+  return $form;
+}
+
+/**
+ * Additional submit callback to redirect the user to the "Edit view" form.
+ */
+function hs_nodereference_views_common_config_form_submit($form, &$form_state) {
+  module_load_include('inc', 'hierarchical_select', 'includes/common');
+
+  $view_name  = $form['#custom_submit_data']['view_name'];
+  $display_id = $form['#custom_submit_data']['display_id'];
+  $filter_id  = $form['#custom_submit_data']['filter_id'];
+  $view       = views_get_view($view_name);
+
+  $config_id = $form_state['values']['hierarchical_select_config']['config_id'];
+  $config    = hierarchical_select_common_config_get($config_id);
+
+  // Overrides when save_lineage is enabled.
+  $new_config = $form_state['values']['hierarchical_select_config'];
+  if ($new_config['save_lineage'] == 1 && $config['save_lineage'] != $new_config['save_lineage']) {
+    $view->display[$display_id]->display_options['filters'][$filter_id]['operator'] = 'and';
+    //$view->display[$display_id]->display_options['filters'][$filter_id]['expose']['use_operator'] = 0;
+    $view->save();
+
+    views_object_cache_clear('view', $view_name);
+    drupal_set_message(t("Because you've enabled the 'Save Lineage' setting, 
+      the operator has been set to 'AND' since this is the correct setting if
+      you would like to filter by node reference field saved by Hierarchical 
+      Select widget using Save Lineage setting. However it is possible you're
+      trying to filter a node reference field by the selected node or its 
+      ancestors, if that is the case, you can change the operator back
+      in View's display configuration"));
+  }
+}
+
+
+//----------------------------------------------------------------------------
+// Hierarchical Select hooks.
+
+/**
+ * Implementation of hook_hierarchical_select_params().
+ */
+function hs_nodereference_views_hierarchical_select_params() {
+  $params = array(
+    'nodereference_path',
+    'optional',    // Do we display an "All" option?
+    'filter_id',   // The ID of the filter. Necessary for entity count support.
+  );
+  return $params;
+}
+
+/**
+ * Implementation of hook_hierarchical_select_root_level().
+ */
+function hs_nodereference_views_hierarchical_select_root_level($params) {
+  $root_level =  ($params['optional']) ? array(HS_NODEREFERENCE_VIEWS_ANY_OPTION => '<' . t('Any') . '>') : array();
+  $root_level += hs_nodereference_hierarchical_select_root_level($params);
+  return $root_level;
+}
+
+/**
+ * Implementation of hook_hierarchical_select_children().
+ */
+function hs_nodereference_views_hierarchical_select_children($parent, $params) {
+  return ($parent == HS_NODEREFERENCE_VIEWS_ANY_OPTION) ? array() : hs_nodereference_hierarchical_select_children($parent, $params);
+}
+
+/**
+ * Implementation of hook_hierarchical_select_lineage().
+ */
+function hs_nodereference_views_hierarchical_select_lineage($item, $params) {
+  return ($item == HS_NODEREFERENCE_VIEWS_ANY_OPTION) ? array($item) : hs_nodereference_hierarchical_select_lineage($item, $params);
+}
+
+/**
+ * Implementation of hook_hierarchical_select_valid_item().
+ */
+function hs_nodereference_views_hierarchical_select_valid_item($item, $params) {
+  return ($item == HS_NODEREFERENCE_VIEWS_ANY_OPTION || hs_nodereference_hierarchical_select_valid_item($item, $params));
+}
+
+/**
+ * Implementation of hook_hierarchical_select_item_get_label().
+ */
+function hs_nodereference_views_hierarchical_select_item_get_label($item, $params) {
+  return ($item == HS_NODEREFERENCE_VIEWS_ANY_OPTION) ? '<' . t('Any') . '>' : hs_nodereference_hierarchical_select_item_get_label($item, $params);
+}
+
+/**
+ * Implementation of hook_hierarchical_select_create_item().
+ */
+// No implementation. This doesn't make sense for exposed filters: if you were
+// able to create new items in the hierarchy, how could you then possibly find
+// anything for that item?
+
+/**
+ * Implementation of hook_hierarchical_select_entity_count().
+ */
+/*
+function hs_nodereference_views_hierarchical_select_entity_count($item, $params) {
+  return 0;
+}
+ */
+
+/**
+ * Implementation of hook_hierarchical_select_implementation_info().
+ */
+function hs_nodereference_views_hierarchical_select_implementation_info() {
+  return array(
+    'hierarchy type' => t('Node Reference'),
+    'entity type'    => t('N/A'),
+  );
+}
+
+/**
+ * Implementation of hook_hierarchical_select_config_info().
+ */
+function hs_nodereference_views_hierarchical_select_config_info() {
+  $config_info = array();
+  $views = views_get_all_views();
+
+  foreach ($views as $view) {
+    foreach (array_keys($view->display) as $display_id) {
+      if (count($view->display[$display_id]->display_options['filters'])) {
+        foreach ($view->display[$display_id]->display_options['filters'] as $filter) {
+          if ($filter['type'] == 'hierarchical_select' && drupal_substr($filter['field'], -4, 4) == '_nid') {
+            $field = _hs_nodereference_views_get_field_for_filter($filter);
+            $type = content_types($field['type_name']);
+            $filter_label = (!empty($filter['expose']['label'])) ? $filter['expose']['label'] : t('Node Reference');
+            $filter_id = $filter['id'];
+            $config_id = "nodereference-views-$view_name-$display_id-$filter_id";
+            $config_info[$config_id] = array(
+              'config_id'      => $config_id,
+              'hierarchy type' => t('Node Reference'),
+              'hierarchy'      => t($type['name']) . ' -> ' . t($field['widget']['label']),
+              'entity type'    => t('N/A'),
+              'entity'         => t('N/A'),
+              'context type'   => t('Views (exposed) filter'),
+              'context'        => t("'!view-name' view, '!display-name' display, '!filter-label' filter",
+                                    array(
+                                      '!view-name'    => $view->name,
+                                      '!display-name' => $display_id,
+                                      '!filter-label' => $filter_label,
+                                    )
+                                    ),
+              'edit link'      => _hs_nodereference_views_config_path($view->name, $display_id, $filter_id),
+            );
+          }
+        }
+      }
+    }
+  }
+
+  return  $config_info;
+}
+
+
+//----------------------------------------------------------------------------
+// Private functions.
+
+/**
+ * Get a filter from a view object.
+ *
+ * @param $view
+ *   A view object.
+ * @param $display_id
+ *   The ID of a display within the given view object.
+ * @param $filter_id
+ *   The ID of a filter used within the given view object.
+ * @return
+ *   The filter array.
+ */
+function _hs_nodereference_views_get_filter($view, $display_id, $filter_id) {
+  $filters = $view->display[$display_id]->display_options['filters'];
+  return (!isset($filters[$filter_id])) ? FALSE : $filters[$filter_id];
+}
+
+/**
+ * Get a filter's label from a view object.
+ *
+ * @param $view
+ *   A view object.
+ * @param $display_id
+ *   The ID of a display within the given view object.
+ * @param $filter_id
+ *   The ID of a filter used within the given view object.
+ * @return
+ *   The filter's label.
+ */
+function _hs_nodereference_views_get_filter_label($view, $display_id, $filter_id) {
+  $filter = _hs_nodereference_views_get_filter($view, $display_id, $filter_id);
+  return ($filter) ? $filter['expose']['label'] : $filter_id;
+}
+
+/**
+ * Generate the path at which the configuration form of the given filter is
+ * available.
+ *
+ * @param $view
+ *   A view object.
+ * @param $display_id
+ *   The ID of a display within the given view object.
+ * @param $filter_id
+ *   The ID of a filter used within the given view object.
+ * @return
+ *   The Drupal path for the desired config form..
+ */
+function _hs_nodereference_views_config_path($view_name, $display_id, $filter_id) {
+  return "admin/build/views/hs_config_nodereference/$view_name/$display_id/$filter_id";
+}
+
+/**
+ * Find out what the name is of the display with the most specific settings
+ * for the given filter ID.
+ * If a display has overriden the default display, then that display's name
+ * will be returned instead of 'default'. That's also how Views picks which
+ * filter settings to use.
+ *
+ * @param $view
+ *   A view object.
+ * @param $display_id
+ *   The ID of a display within the given view object.
+ * @param $filter_id
+ *   The ID of a filter used within the given view object.
+ * @return
+ *   The most specfic display name.
+ */
+function _hs_nodereference_views_get_display_id_for_filter($view, $filter_id) {
+  $current_display = $view->current_display;
+  $current_display_filters = $view->display[$current_display]->display_options['filters'];
+  return (isset($current_display_filters[$filter_id])) ? $current_display : 'default';
+}
+
+/**
+ * Get the node reference field (not content type specific) for the filter
+ * @param $view
+ * @param $display_id
+ * @param $filter_id
+ * @return
+ *   - FALSE if no field could be found
+ *   - field array loaded by content_fields otherwise
+ */
+function _hs_nodereference_views_get_field_for_filter($filter) {
+  $field_name = drupal_substr($filter['field'], 0, drupal_strlen($filter['field']) - 4); // remove '_nid' from db field name
+  $fields = content_fields();
+  return isset($fields[$field_name]) ? $fields[$field_name] : FALSE;
+}

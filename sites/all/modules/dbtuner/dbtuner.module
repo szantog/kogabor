@@ -1,0 +1,54 @@
+<?php
+// $Id: dbtuner.module,v 1.1.2.3 2010/05/09 09:54:39 mikeytown2 Exp $
+
+/**
+ * @file
+ * Auto Tune Database
+ */
+
+/**
+ * Implementation of hook_menu().
+ */
+function dbtuner_menu() {
+  $items['admin/settings/dbtuner'] = array(
+    'title' => 'DB Tuner',
+    'description' => 'Add indexes to your database',
+    'page callback' => 'dbtuner_indexes_page',
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'dbtuner.admin.inc',
+  );
+  $items['admin/settings/dbtuner/index'] = array(
+    'title' => 'Indexes',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 0,
+  );
+  $items['admin/settings/dbtuner/engine'] = array(
+    'title' => 'Engine',
+    'description' => 'Change Database Engine',
+    'page callback' => 'dbtuner_engine_page',
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'dbtuner.admin.inc',
+    'weight' => 1,
+  );
+  $items['admin/settings/dbtuner/collation'] = array(
+    'title' => 'Collation',
+    'description' => 'Change Databases Collation',
+    'page callback' => 'dbtuner_collation_page',
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'dbtuner.admin.inc',
+    'weight' => 2,
+  );
+  $items['admin/settings/dbtuner/mysqltuner'] = array(
+    'title' => 'MySQL Tuner',
+    'description' => 'Run database tuning script',
+    'page callback' => 'dbtuner_mysqltuner_page',
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'dbtuner.mysqltuner.inc',
+    'weight' => 3,
+  );
+  return $items;
+}
