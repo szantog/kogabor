@@ -1,0 +1,7 @@
+; $Id: $
+name = "In-place translation Extra"
+description = "Extends the label of fields"
+package = "Multilanguage"
+core = 6.x
+
+dependencies[] = ipetranslation

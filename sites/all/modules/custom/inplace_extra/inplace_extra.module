@@ -1,0 +1,61 @@
+<?php
+
+function inplace_extra_form_alter(&$form, &$form_state, $form_id) {
+  if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] . '_node_form' == $form_id) {
+
+    foreach($form as $key => $field) {
+      if(substr($key, 0, 6) === "group_") {
+        foreach($form[$key] as $keyg => $fieldg) {
+          if(substr($keyg, 0, 6) === "field_") {
+            if(isset($form[$keyg."_hu"])) {
+              $form[$key][$keyg."_hu"] = $form[$keyg."_hu"];
+              unset($form[$keyg."_hu"]);
+            }
+            if(isset($form[$keyg."_en"])) {
+              $form[$key][$keyg."_en"] = $form[$keyg."_en"];
+              unset($form[$keyg."_en"]);
+            }
+          }
+        }
+      }
+    }
+    
+    foreach($form as $key => $field) {
+      if(substr($key, 0, 6) === "group_") {
+        foreach($field as $keyf => $fieldf) {
+          if(substr($keyf, 0, 6) === "field_") {
+            global $language;
+            if(isset($form[$key][$keyf."_hu"])) {
+              $form[$key][$keyf][0]['#title'] .= " (". $language->language .")";
+              $form[$key][$keyf."_hu"][0]['#title'] .= " (hu)";
+            }
+            if(isset($form[$key][$keyf."_en"])) {
+              $form[$key][$keyf][0]['#title'] .= " (". $language->language .")";
+              $form[$key][$keyf."_en"][0]['#title'] .= " (en)";
+            }
+          }
+        }
+      }
+      if(substr($key, 0, 6) === "field_") {
+        global $language;
+        if(isset($form[$key."_hu"])) {
+          $form[$key][0]['#title'] .= " (". $language->language .")";
+          $form[$key."_hu"][0]['#title'] .= " (hu)";
+        }
+        if(isset($form[$key."_en"])) {
+          $form[$key][0]['#title'] .= " (". $language->language .")";
+          $form[$key."_en"][0]['#title'] .= " (en)";
+        }
+      }
+    }
+    $lang = $language->language == "en" ? "hu" : "en";
+    if (auto_nodetitle_get_setting($form['#node']->type) == AUTO_NODETITLE_ENABLED) {
+      // we will autogenerate the title later, just hide the title field in the meanwhile
+      $form['title_'.$lang]['#value'] = 'ant';
+      $form['title_'.$lang]['#type'] = 'value';
+      $form['title_'.$lang]['#required'] = FALSE;
+      $form['#submit'][] = 'auto_nodetitle_node_form_submit';
+    }
+    //dpm($form);
+  }  
+}
