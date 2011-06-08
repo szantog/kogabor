@@ -54,8 +54,44 @@ function inplace_extra_form_alter(&$form, &$form_state, $form_id) {
       $form['title_'.$lang]['#value'] = 'ant';
       $form['title_'.$lang]['#type'] = 'value';
       $form['title_'.$lang]['#required'] = FALSE;
-      $form['#submit'][] = 'auto_nodetitle_node_form_submit';
+      $form['#submit'][] = 'inplace_extra_node_form_submit';
     }
     //dpm($form);
   }  
+}
+
+/**
+ * Makes sure the node preview is shown right.
+ * It gets the node object, modifies the title, and updates the node in the form_state.
+ */
+function inplace_extra_node_form_submit($form, &$form_state) {
+  // Only do something, if the user clicked the preview button.
+  if (isset($form_state['clicked_button']['#submit']) && in_array('node_form_build_preview', $form_state['clicked_button']['#submit'])) {
+    $setting = auto_nodetitle_get_setting($form_state['values']['type']);
+    if ($setting == AUTO_NODETITLE_ENABLED) {
+      $node = node_submit($form_state['values']);
+      inplace_extra_set_title($node);
+      $form_state['values'] = (array)$node;
+    }
+  }
+}
+
+/**
+ * Sets the automatically generated nodetitle for the node
+ */
+function inplace_extra_set_title(&$node) {
+  global $language;
+  $types = node_get_types();
+  $pattern = variable_get('ant_pattern_'. $node->type, '');
+  $lang = $language->language == "en" ? "title_hu" : "title_en";
+  if (trim($pattern)) {
+    $node->changed = time();
+    $node->$lang = _auto_nodetitle_patternprocessor($pattern, $node);
+  }
+  else if ($node->nid) {
+    $node->$lang = t('@type @node-id', array('@type' => $types[$node->type]->name, '@node-id' => $node->nid));
+  }
+  else {
+    $node->$lang = t('@type', array('@type' => $types[$node->type]->name));
+  }
 }
