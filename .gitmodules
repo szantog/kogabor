@@ -1,3 +1,6 @@
 [submodule "sites/all/modules/patched/ipetranslation"]
 	path = sites/all/modules/patched/ipetranslation
 	url = git://repos.szantogabor.com/kogabor/ipetranslation.git
+[submodule "sites/all/modules/patched/nodeformsettings"]
+	path = sites/all/modules/patched/nodeformsettings
+	url = git://repos.szantogabor.com/kogabor/nodeformsettings.git
