@@ -1,0 +1,3 @@
+[submodule "sites/all/modules/patched/ipetranslation"]
+	path = sites/all/modules/patched/ipetranslation
+	url = git://repos.szantogabor.com/kogabor/ipetranslation.git
