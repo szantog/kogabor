@@ -13,7 +13,7 @@
 
 function kgart_admin_page() {
   module_load_include('inc', 'kgart_admin', 'includes/kgart_admin.forms');
-  $page = drupal_get_form(kgart_admin_form());
+  $page = drupal_get_form('kgart_admin_form');
   dsm(get_defined_vars());
   return $page;
 }
