@@ -1,0 +1,6 @@
+name = kgart_admin
+description = Custom administration pages and functions for Kovács Gábor gyűjtemény site.
+package = kogabor
+core = 6.x
+
+dependencies[] = menu
