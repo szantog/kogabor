@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * @file
+ *   Custom administration pages and functions for Kovács Gábor gyűjtemény site.
+ *   Project:Young Element
+ *
+ * @developers:
+ *    Gabor Szanto <hello@szantogabor.com>
+ *    http://szantogabor.com
+ *
+ */
+
+/**
+ * Implementation of hook_menu().
+ *
+ * @return An array of menu items.
+ */
+function kgart_admin_menu() {
+  $items = array();
+
+  $items['content-admin/site_defaults'] = array(
+    'title' => 'Site default settings',
+    'description' => 'description',
+    'page callback' => 'kgart_admin_page',
+    //'page arguments' => array('callback_arg'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'includes/kgart_admin.pages.inc',
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_form().
+ *
+ * @param &$node The node being added or edited.
+ * @param $form_state The form state array.
+ * @return An array containing the form elements to be displayed in the node edit form.
+ */
+function kgart_form(&$node, $form_state) {
+  $form = array();
+
+
+  $form['egy'] = array(
+    '#type' => 'text'
+  );
+
+
+  return $form;
+}
