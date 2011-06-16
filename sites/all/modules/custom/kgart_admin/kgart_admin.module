@@ -33,20 +33,21 @@ function kgart_admin_menu() {
 }
 
 /**
- * Implementation of hook_form().
- *
- * @param &$node The node being added or edited.
- * @param $form_state The form state array.
- * @return An array containing the form elements to be displayed in the node edit form.
+ * Implementation of hook_form_alter().
  */
-function kgart_form(&$node, $form_state) {
-  $form = array();
+function kgart_admin_form_alter(&$form, $form_state, $form_id) {
+  if ($form['#id'] == 'node-form') {
+    $type = $form['type']['#value'] ;
+    $type_name = check_plain(node_get_types('name', $type));
+    $node = $form['#node'];
 
-
-  $form['egy'] = array(
-    '#type' => 'text'
-  );
-
-
-  return $form;
+    //Add nid to node forms
+    $form['show_nid'] = array (
+      '#prefix' => '<div id="show-nid" class="form-item">',
+      '#suffix' => '</div>',
+      '#value' => '<label>' . t('@type ID', array('@type' => t($type_name))) . ': </label>' . $node->nid,
+      '#type' => 'markup',
+    );
+    //dsm(get_defined_vars());
+  }
 }
