@@ -1,12 +1,92 @@
 
 @import "base.less";
 
-.form-region-right {
-  //.left-label(140px; 220px)
+div.node-form .resizable-textarea {
+  width: 99.5%;
+  .clear;
 }
 
-select {
-  //height: 23px;
+.node-type-art {
+  .form-region-main .form-textfield-container,
+  .form-region-main .form-select-container,
+  #show-nid {
+    .left-label(140px; auto);
+
+    select,
+    input {
+      .left;
+      width: 200px;
+    }
+
+    select {
+      width: 207px;
+    }
+    .no-marding;
+    .clearfix;
+
+    .description {
+      .no-marding;
+      line-height: inherit;
+    }
+  }
+
+  .form-region-main .form-textarea-container {
+    .left-label;
+    .no-marding;
+
+    label {
+      .m-top;
+    }
+    .description {
+      line-height: inherit;
+      .left;
+      .m-top;
+    }
+  }
+
+  #group-exhibition-items {
+    .m-top;
+  }
+
+  .container-inline-date {
+    display: inline-block;
+    .left-label(140px; 200px;);
+    .no-marding;
+
+    input {
+      .no-marding;
+    }
+  }
+
+  #edit-field-art-date-0-value2-wrapper {
+    .left-label(auto; auto;);
+  }
+
+  .form-region-main fieldset {
+    border: medium none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+
+    .fieldset-wrapper {
+      padding: 0;
+    }
+    legend {
+      display: none;
+    }
+
+    .description {
+      float: right;
+      width: 235px;
+      .no-marding;
+    }
+
+
+  }
+
+  select {
+    height: 23px;
+  }
 }
 // node forms
 
@@ -25,7 +105,7 @@ select {
 }
 
 #edit-group-exhibition-0-field-art-exhibition-visibility-value--wrapper {
-  //display: none;
+  display: none;
 }
 
 .date-clear-block {
