@@ -3,4 +3,4 @@ description = Custom administration pages and functions for Kovács Gábor gyűj
 package = kogabor
 core = 6.x
 
-dependencies[] = menu
+dependencies[] = i18n
