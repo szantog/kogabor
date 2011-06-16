@@ -43,12 +43,7 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
 
     if ($type == 'art') {
       //we need manually short some elements.
-
-      $form['options']['status']['#weight'] = 5;
-      $form['options']['promote']['#weight'] = 4;
       $form['#after_build'][] = 'kgart_admin_move_node_options';
-      $form['#validate'][] = 'kgart_admin_art_object_node_form_validate';
-      $form['#submit'][] = 'kgart_admin_art_object_node_form_submit';
     }
 
     //Add nid to node forms
@@ -74,7 +69,7 @@ function kgart_admin_move_node_options($form, &$form_state) {
   $form['flag']['promote'] = $form['options']['promote'];
 
   $form['flag']['status']['#description'] = t('Appears on front');
-  $form['flag']['promote']['#description'] = t('How?');
+  $form['flag']['promote']['#description'] = t('Deprecated if Kovács Gábor\'s collection');
 
   unset ($form['options']['status']);
   unset ($form['options']['promote']);
@@ -89,22 +84,8 @@ function kgart_admin_move_node_options($form, &$form_state) {
   if (isset($form['flag']['new_picture'])) {
     $form['flag']['new_picture']['#weight'] = 3;
   }
-
+  $form['flag']['status']['#weight'] = 5;
+  $form['flag']['promote']['#weight'] = 4;
   //dpm(get_defined_vars());
   return $form;
-}
-
-function kgart_admin_art_object_node_form_validate(&$form_state, $form) {
-  //$form['options']['status'] = $form['flag']['status'];
-  //$form['options']['promote'] = $form['flag']['promote'];
-  $form_state['values']['promote'] = $form['flag']['promote']['#value'];
-  $form_state['values']['status'] = $form_state['values']['flag']['status'];
-  $form_state['#redirect'] = NULL;
-  //print '<code>' . var_dump(get_defined_vars()) . '</code>';
-
-}
-
-function kgart_admin_art_object_node_form_submit($form, &$form_state) {
-  $form_state['redirect'] = NULL;
-  //dsm(get_defined_vars());
 }
