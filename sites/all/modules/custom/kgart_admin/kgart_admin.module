@@ -68,7 +68,7 @@ function kgart_admin_move_node_options($form, &$form_state) {
   $form['flag']['status'] = $form['options']['status'];
   $form['flag']['promote'] = $form['options']['promote'];
 
-  $form['flag']['status']['#description'] = t('(Appears on front)');
+  $form['flag']['status']['#description'] = t('(This content appears on front)');
   $form['flag']['promote']['#description'] = t('(Deprecated if Kovács Gábor\'s collection)');
 
   unset ($form['options']['status']);
@@ -95,6 +95,5 @@ function kgart_admin_move_node_options($form, &$form_state) {
   $form['field_art_image_note']['#suffix'] = '<div class="separator"></div>';
   $form['field_art_state']['#suffix'] = '<div class="separator"></div>';
   $form['group_exhibition']['#suffix'] = '</div><div class="separator"></div>';
-  dpm(get_defined_vars());
   return $form;
 }
