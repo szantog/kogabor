@@ -35,12 +35,9 @@ div.node-form .resizable-textarea {
     .no-marding;
 
     label {
-      .m-top;
     }
     .description {
       line-height: inherit;
-      .left;
-      .m-top;
     }
   }
 
@@ -50,11 +47,18 @@ div.node-form .resizable-textarea {
 
   .container-inline-date {
     display: inline-block;
-    .left-label(140px; 200px;);
-    .no-marding;
+    //.no-marding;
+    .m-right;
+    .left-label(140px; 140px;);
 
     input {
       .no-marding;
+      //width: 140px !important;
+      .m-right;
+    }
+
+    .form-item .description {
+      width: auto;
     }
   }
 
@@ -77,7 +81,7 @@ div.node-form .resizable-textarea {
 
     .description {
       float: right;
-      width: 235px;
+      width: 160px;
       .no-marding;
     }
 
@@ -86,6 +90,31 @@ div.node-form .resizable-textarea {
 
   select {
     height: 23px;
+  }
+  .resizable-textarea {
+    .m-bottom;
+  }
+
+  .separator {
+    .m-bottom;
+  }
+
+  .form-imagefield_widget-container {
+    .no-marding;
+  }
+
+  .form-region-right {
+    .form-checkbox-container {
+      .clearfix;
+      .m-top(0);
+      .padding(0);
+      .clear;
+
+
+      .description {
+        margin: 3px 0;
+      }
+    }
   }
 }
 // node forms
@@ -112,6 +141,7 @@ div.node-form .resizable-textarea {
   //display: inline-block !important;
 }
 
+
 .group-art-non-published-details {
   fieldset {
     //.clear;
@@ -120,6 +150,10 @@ div.node-form .resizable-textarea {
 
 #edit-field-art-purchase-note-0-value-wrapper {
   //.clear;
+}
+
+#conditional-field-art-slideshow {
+  .left;
 }
 
 #conditional-field-art-slideshow-weight {
@@ -137,4 +171,11 @@ div.node-form .resizable-textarea {
 
 .views-exposed-form .views-exposed-widget {
   float: none;
+}
+
+ul.tips, div.description, .form-item div.description {
+  color: #666666;
+  font-size: 11px;
+  line-height: 15px;
+  margin: 5px 0;
 }
