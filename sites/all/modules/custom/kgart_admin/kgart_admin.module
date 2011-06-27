@@ -12,6 +12,21 @@
  */
 
 /**
+ * Implementation of hook_boot().
+ */
+function kgart_admin_boot() {
+  global $conf;
+  $conf['i18n_variables'] = array(
+    // Site name, slogan, mission, etc..
+    'site_name',
+    'site_slogan',
+    'site_mission',
+    'site_footer',
+    'nodeformscols_field_placements_exhibition_default',
+  );
+}
+
+/**
  * Implementation of hook_menu().
  *
  * @return An array of menu items.
