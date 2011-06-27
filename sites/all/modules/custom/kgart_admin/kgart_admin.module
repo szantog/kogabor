@@ -53,7 +53,14 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
       '#value' => '<label>' . t('@type ID', array('@type' => t($type_name))) . ': </label>' . $node->nid,
       '#type' => 'markup',
     );
-    //dsm(get_defined_vars());
+
+    //@todo This is a tmp solution to put country field via noderef to form
+    //By default the fields attaced by views_attach couldn't ordered on node type manage form fields
+    if (isset($form['node_ref_subfield_node_content_1'])) {
+      $form['country'] = $form['node_ref_subfield_node_content_1'];
+      unset($form['node_ref_subfield_node_content_1']);
+    }
+
   }
 }
 
