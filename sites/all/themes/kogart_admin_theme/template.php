@@ -55,3 +55,10 @@ function kogart_admin_theme_preprocess_page(&$vars) {
   }
   $vars['body_classes'] = implode(' ', $classes_array);
 }
+
+ /**
+ * Preprocess function to run ahead of other modules.
+ */
+function kogart_admin_theme_preprocess_node_form(&$aVars) {
+  dsm(get_defined_vars());
+}

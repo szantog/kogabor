@@ -66,7 +66,7 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
   if ($form_id == 'nodeformcols_configuration_form' && $language != language_default()) {
     unset($form['submit']);
   }
-  
+
   if ($form['#id'] == 'node-form') {
     $type = $form['type']['#value'] ;
     $type_name = check_plain(node_get_types('name', $type));
@@ -83,6 +83,7 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
       '#suffix' => '</div>',
       '#value' => '<label>' . t('@type ID', array('@type' => t($type_name))) . ': </label>' . $node->nid,
       '#type' => 'markup',
+      '#weight' => -1000,
     );
 
     //@todo This is a tmp solution to put country field via noderef to form
@@ -101,7 +102,12 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
         $form['field_exhibition_museum']['#suffix'] = '<div class="description">' . t('Admin warning: If you doesn\'t want default value, you have to set this field "Not required" on cck form, then use _form_alter to set up required') . '</div>';
       }
     }
-    dsm(get_defined_vars());
+
+    //Manual weight overrides because of nodeformcols and ipetranslation conflict
+    if ($language->language == 'hu') {
+      $form['#after_build'][] = 'kgart_admin_set_field_hu_weight';
+    }
+    //dsm(get_defined_vars());
   }
 }
 
@@ -158,3 +164,16 @@ function kgart_admin_move_node_options($form, &$form_state) {
   return $form;
 }
 
+function kgart_admin_set_field_hu_weight($form, &$form_state) {
+  $form['#sorted'] = FALSE;
+  $form['show_nid']['#weight'] = -110;
+  $form['show_nid']['#sorted'] = FALSE;
+  $form['title_en']['#sorted'] = FALSE;
+  $form['title_en']['#weight'] = 100;
+  $form['title_en']['#sorted'] = FALSE;
+  $form['title_en']['#weight'] = 101;
+  $form['field_exhibition_lead_en']['#sorted'] = FALSE;
+  $form['field_exhibition_lead_en']['#weight'] = 110;
+  dsm(get_defined_vars());
+  return $form;
+}

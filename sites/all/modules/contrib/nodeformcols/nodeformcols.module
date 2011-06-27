@@ -200,7 +200,7 @@ function template_preprocess_node_form(&$aVars) {
       $form['nodeformcols_region_' . $name] = $regions[$name];
     }
   }
-
+  dsm(get_defined_vars());
   $aVars['class'] = join($class, ' ');
 }
 
