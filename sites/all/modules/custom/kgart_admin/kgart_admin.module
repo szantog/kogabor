@@ -56,11 +56,11 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
 
     //@todo This is a tmp solution to put country field via noderef to form
     //By default the fields attaced by views_attach couldn't ordered on node type manage form fields
-    if (isset($form['node_ref_subfield_node_content_1'])) {
-      $form['country'] = $form['node_ref_subfield_node_content_1'];
-      unset($form['node_ref_subfield_node_content_1']);
+    //When create an empty array to this form item, de nfc can save it's variable.
+    if (($node->type == 'museum') && !isset($form['node_ref_subfield_node_content_1'])) {
+      $form['node_ref_subfield_node_content_1'] = array();
     }
-    dsm(get_defined_vars());
+    //dsm(get_defined_vars());
   }
 }
 
