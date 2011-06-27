@@ -27,6 +27,16 @@ function kgart_admin_boot() {
 }
 
 /**
+ * Implementation of hook_init().
+ */
+function kgart_admin_init() {
+  global $language;
+  if (user_access('administer content types') && arg(2) == 'node-type' && arg(4) == 'form' && $language != language_default()) {
+    drupal_set_message(t('This form could save only on <strong>the default</strong> language! If need some fix, use _form_alter, look at kgart_admin module!'), 'warning');
+  }
+}
+
+/**
  * Implementation of hook_menu().
  *
  * @return An array of menu items.
@@ -51,6 +61,12 @@ function kgart_admin_menu() {
  * Implementation of hook_form_alter().
  */
 function kgart_admin_form_alter(&$form, $form_state, $form_id) {
+  //dsm($form_id);
+  global $language;
+  if ($form_id == 'nodeformcols_configuration_form' && $language != language_default()) {
+    unset($form['submit']);
+  }
+  
   if ($form['#id'] == 'node-form') {
     $type = $form['type']['#value'] ;
     $type_name = check_plain(node_get_types('name', $type));
@@ -85,7 +101,7 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
         $form['field_exhibition_museum']['#suffix'] = '<div class="description">' . t('Admin warning: If you doesn\'t want default value, you have to set this field "Not required" on cck form, then use _form_alter to set up required') . '</div>';
       }
     }
-    //dsm(get_defined_vars());
+    dsm(get_defined_vars());
   }
 }
 
