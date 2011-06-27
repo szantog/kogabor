@@ -1,5 +1,4 @@
 <?php
-// $Id: views_handler_relationship_node_term_data.inc,v 1.1.2.1 2009/07/01 06:13:42 merlinofchaos Exp $
 /**
  * @file
  * Views' relationship handlers.

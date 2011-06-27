@@ -1,5 +1,4 @@
 <?php
-// $Id: views_handler_relationship.inc,v 1.1.2.2 2009/11/02 23:25:10 merlinofchaos Exp $
 /**
  * @file
  * Views' relationship handlers.
@@ -73,6 +72,7 @@ class views_handler_relationship extends views_handler {
    * should have.
    */
   function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
     $form['label'] = array(
       '#type' => 'textfield',
       '#title' => t('Label'),
@@ -115,6 +115,7 @@ class views_handler_relationship extends views_handler {
     }
 
     $join->definition = $def;
+    $join->options = $this->options;
     $join->construct();
     $join->adjusted = TRUE;
 

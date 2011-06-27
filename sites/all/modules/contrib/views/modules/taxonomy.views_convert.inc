@@ -1,5 +1,4 @@
 <?php
-//$Id: taxonomy.views_convert.inc,v 1.2.2.2 2009/06/30 19:14:17 merlinofchaos Exp $
 
 /**
  * @file
@@ -20,6 +19,8 @@ function taxonomy_views_convert($display, $type, &$view, $field, $id = NULL) {
         switch ($field['field']) {
           case 'name':
             $item = $view->get_item($display, 'field', $id);
+            $item['table'] = 'term_node';
+            $item['field'] = 'tid';
             if ($field['options'] != 'nolink') {
               $item['link_to_taxonomy'] = TRUE;
             }
