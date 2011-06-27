@@ -1,5 +1,8 @@
 <?php
 
+/*
+ * Using this to add $element['#type'] class to main containers of form items
+ */
 function kogart_admin_theme_form_element($element, $value) {
   // This is also used in the installer, pre-database setup.
 
