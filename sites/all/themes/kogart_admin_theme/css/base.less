@@ -759,3 +759,20 @@
     width: @element-width;
   }
 }
+
+.half-field {
+  float: left;
+  width: 49%;
+
+  label {
+    float: none;
+    width: 98%;
+    .m-right(0);
+  }
+
+  select,
+  input,
+  .resizable-textarea  {
+    width: 95%;
+  }
+}
