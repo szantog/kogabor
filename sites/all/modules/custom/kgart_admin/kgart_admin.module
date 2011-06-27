@@ -60,7 +60,7 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
       $form['country'] = $form['node_ref_subfield_node_content_1'];
       unset($form['node_ref_subfield_node_content_1']);
     }
-
+    dsm(get_defined_vars());
   }
 }
 
