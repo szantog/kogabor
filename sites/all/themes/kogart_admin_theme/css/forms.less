@@ -90,6 +90,7 @@ div.node-form .resizable-textarea {
     height: 23px;
   }
   .resizable-textarea {
+    margin: 0;
     .m-bottom;
   }
 
@@ -166,7 +167,33 @@ div.node-form .resizable-textarea {
   .form-region-main .form-textfield-container,
   .form-region-main .form-select-container,
   #show-nid {
-    .left-label(240px; auto);
+
+  }
+
+  .fieldset-wrapper {
+    .separator;
+    margin-bottom: 1em !important;
+  }
+
+  #edit-title-en-wrapper,
+  #edit-title-wrapper,
+  #edit-field-exhibition-lead-0-value-wrapper,
+  #edit-field-exhibition-lead-en-0-value-wrapper,
+  #edit-field-exhibition-image-title-en-0-value-wrapper,
+  #edit-field-exhibition-image-title-0-value-wrapper {
+    .half-field;
+    .separator;
+    margin-bottom: 0.5em !important;
+  }
+
+  #edit-field-exhibition-image-artist-en-0-value-wrapper,
+  #edit-field-exhibition-image-artist-0-value-wrapper {
+    .half-field;
+  }
+
+  #edit-field-exhibition-lead-0-value-wrapper,
+  #edit-field-exhibition-lead-en-0-value-wrapper {
+
   }
 
   .node-form-has-region-main .container-inline-date {
@@ -184,6 +211,10 @@ div.node-form .resizable-textarea {
     }
   }
 
+  #edit-body-en-wrapper label,
+  #edit-body-wrapper label {
+    margin-bottom: -14px;
+  }
 }
 
 #edit-field-art-artist-nid-nid-wrapper,
