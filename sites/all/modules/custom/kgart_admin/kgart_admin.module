@@ -60,6 +60,9 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
     if (($node->type == 'museum') && !isset($form['node_ref_subfield_node_content_1'])) {
       $form['node_ref_subfield_node_content_1'] = array();
     }
+    if (($node->type == 'exhibition') && !isset($form['node_ref_subfield_node_content_2'])) {
+      $form['node_ref_subfield_node_content_2'] = array();
+    }
     //dsm(get_defined_vars());
   }
 }
