@@ -54,5 +54,4 @@ function kogart_admin_theme_preprocess_page(&$vars) {
     $classes_array[] = 'node-type-' . arg(2);
   }
   $vars['body_classes'] = implode(' ', $classes_array);
-  dsm(get_defined_vars());
 }
