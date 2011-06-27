@@ -43,4 +43,16 @@ function kogart_admin_theme_form_element($element, $value) {
 
   return $output;
 }
-?>
+
+function kogart_admin_theme_preprocess_page(&$vars) {
+  $classes_array = explode(' ', $vars['body_classes']);
+  if ($vars['node']) {
+    $node = $vars['node'];
+  }
+
+  if (arg(0) == 'node' && arg(1) == 'add') {
+    $classes_array[] = 'node-type-' . arg(2);
+  }
+  $vars['body_classes'] = implode(' ', $classes_array);
+  dsm(get_defined_vars());
+}
