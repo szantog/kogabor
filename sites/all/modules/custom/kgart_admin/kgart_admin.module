@@ -103,10 +103,6 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
       }
     }
 
-    //Manual weight overrides because of nodeformcols and ipetranslation conflict
-    if ($language->language == 'hu') {
-      $form['#after_build'][] = 'kgart_admin_set_field_hu_weight';
-    }
     //dsm(get_defined_vars());
   }
 }
