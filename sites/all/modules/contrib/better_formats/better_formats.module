@@ -1,5 +1,4 @@
 <?php
-// $Id: better_formats.module,v 1.23.2.17 2010/02/05 13:59:18 dragonwize Exp $
 
 /**
  * @file
@@ -309,8 +308,9 @@ function better_formats_text_process($element, $edit, $form_state, $form) {
     $parents    = array_merge($element['#parents'] , array($filter_key));
     $default    = better_formats_get_default_format('node', $form['type']['#value']);
 
-    // Overwrite format default if new node.
-    if (!isset($form_state['values']['nid']) || empty($format)) {
+    // Overwrite format default if new node unless the field has a default text
+    // or is being previewed.
+    if ((!isset($form_state['values']['nid']) && !isset($element['#default_value']['value'])) || empty($format)) {
       $format = $default;
     }
     $format = filter_resolve_format($format);
@@ -528,8 +528,8 @@ function better_formats_filter_form($value = FILTER_FORMAT_DEFAULT, $default_for
     $collapsible    = user_access('collapsible format selection');
     $fieldset_title = variable_get('better_formats_fieldset_title', '');
 
-    if (module_exists('i18n_strings') && $fieldset_title) {
-      $fieldset_title = tt($fieldset_title);
+    if (module_exists('i18nstrings') && $fieldset_title) {
+      $fieldset_title = i18nstrings($fieldset_title);
     }
     else {
       $fieldset_title = $fieldset_title ? $fieldset_title : t('Input format');
@@ -537,7 +537,7 @@ function better_formats_filter_form($value = FILTER_FORMAT_DEFAULT, $default_for
 
     $form = array(
       '#type' => 'fieldset',
-      '#title' => $fieldset_title,
+      '#title' => check_plain($fieldset_title),
       '#collapsible' => $collapsible,
       '#collapsed' => $collapsed,
       '#weight' => $weight,
@@ -551,7 +551,7 @@ function better_formats_filter_form($value = FILTER_FORMAT_DEFAULT, $default_for
       $parents_for_id = array_merge($parents, array($format->format));
       $form[$format->format] = array(
         '#type' => 'radio',
-        '#title' => $format->name,
+        '#title' => check_plain($format->name),
         '#default_value' => $default,
         '#return_value' => $format->format,
         '#parents' => $parents,
@@ -628,8 +628,8 @@ function better_formats_filter_form($value = FILTER_FORMAT_DEFAULT, $default_for
  */
 function theme_better_formats_filter_tips_more_info() {
   $text = variable_get('better_formats_long_tips_link_text', '');
-  if (module_exists('i18n_strings') && $text) {
-    $text = tt($text);
+  if (module_exists('i18nstrings') && $text) {
+    $text = i18nstrings($text);
   }
   else {
     $text = $text ? $text : t('More information about formatting options');

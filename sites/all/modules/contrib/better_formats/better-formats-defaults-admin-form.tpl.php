@@ -1,5 +1,4 @@
 <?php
-// $Id: better-formats-defaults-admin-form.tpl.php,v 1.3.2.7 2009/09/27 14:27:13 dragonwize Exp $
 
 /**
  * @file

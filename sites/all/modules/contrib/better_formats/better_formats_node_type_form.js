@@ -1,4 +1,3 @@
-// $Id: better_formats_node_type_form.js,v 1.4.2.3 2009/05/31 17:53:41 dragonwize Exp $
 
 /**
  * @file
