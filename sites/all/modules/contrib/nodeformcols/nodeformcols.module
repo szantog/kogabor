@@ -161,8 +161,12 @@ function template_preprocess_node_form(&$aVars) {
       continue;
     }
 
-    if (isset($placements[$key])) {
-      $p = $placements[$key];
+    if (isset($placements[$key]) || substr($key, -3) == "_en") {
+      if(substr($key, -3) == "_en") {
+        $p = $placements[str_replace('_en','_hu',$key)];
+      } else {
+        $p = $placements[$key];
+      }
 
       if (isset($p['weight'])) {
         $field['#weight'] = $p['weight'];
@@ -200,7 +204,6 @@ function template_preprocess_node_form(&$aVars) {
       $form['nodeformcols_region_' . $name] = $regions[$name];
     }
   }
-  dsm(get_defined_vars());
   $aVars['class'] = join($class, ' ');
 }
 
