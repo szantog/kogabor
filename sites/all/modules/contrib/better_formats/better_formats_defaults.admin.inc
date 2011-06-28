@@ -1,5 +1,4 @@
 <?php
-// $Id: better_formats_defaults.admin.inc,v 1.3.2.11 2010/02/05 13:52:48 dragonwize Exp $
 
 /**
  * @file
