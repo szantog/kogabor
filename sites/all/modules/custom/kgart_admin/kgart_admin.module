@@ -163,17 +163,3 @@ function kgart_admin_move_node_options($form, &$form_state) {
   //dsm(get_defined_vars());
   return $form;
 }
-
-function kgart_admin_set_field_hu_weight($form, &$form_state) {
-  $form['#sorted'] = FALSE;
-  $form['show_nid']['#weight'] = -110;
-  $form['show_nid']['#sorted'] = FALSE;
-  $form['title_en']['#sorted'] = FALSE;
-  $form['title_en']['#weight'] = 100;
-  $form['title_en']['#sorted'] = FALSE;
-  $form['title_en']['#weight'] = 101;
-  $form['field_exhibition_lead_en']['#sorted'] = FALSE;
-  $form['field_exhibition_lead_en']['#weight'] = 110;
-  dsm(get_defined_vars());
-  return $form;
-}
