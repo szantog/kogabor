@@ -49,7 +49,7 @@ function kgart_admin_menu() {
     'description' => 'description',
     'page callback' => 'kgart_admin_page',
     //'page arguments' => array('callback_arg'),
-    'access arguments' => array('administer site configuration'),
+    'access arguments' => array('create art content'),
     'file' => 'includes/kgart_admin.pages.inc',
     'type' => MENU_CALLBACK,
   );
@@ -103,12 +103,6 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
       }
     }
 
-    //Manual weight overrides because of nodeformcols and ipetranslation conflict
-
-    //Tmp doesn't used
-    if ($language->language == 'hu') {
-      //$form['#after_build'][] = 'kgart_admin_set_field_hu_weight';
-    }
     //dsm(get_defined_vars());
   }
 }
@@ -162,24 +156,6 @@ function kgart_admin_move_node_options($form, &$form_state) {
   if($form['options']['sticky']['#access'] == FALSE) {
     $form['options']['#access'] = FALSE;
   }
-
-  $default_image_dir = variable_get('kgart_image_path', 'images');
-
-  foreach (element_children($form['field_art_image_path_s']) as $key) {
-    $form['field_art_image_path_s'][$key]['value']['#field_prefix'] = '<div class="left">' . variable_get('kgart_image_path_s', $default_image_dir . '/s') . '</div>';
-    $form['field_art_image_path_s'][$key]['value']['#field_suffix'] = '<div class="left">/[filenev]</div>';
-  }
-
-  foreach (element_children($form['field_art_image_path_m']) as $key) {
-    $form['field_art_image_path_m'][$key]['value']['#field_prefix'] = '<div class="left">' . variable_get('kgart_image_path_m', $default_image_dir . '/m') . '</div>';
-    $form['field_art_image_path_m'][$key]['value']['#field_suffix'] = '<div class="left">/[filenev]</div>';
-  }
-
-  foreach (element_children($form['field_art_image_path_l']) as $key) {
-    $form['field_art_image_path_l'][$key]['value']['#field_prefix'] = '<div class="left">' . variable_get('kgart_image_path_l', $default_image_dir . '/l') . '</div>';
-    $form['field_art_image_path_l'][$key]['value']['#field_suffix'] = '<div class="left">/[filenev]</div>';
-  }
-
   //dsm(get_defined_vars());
   return $form;
 }
