@@ -178,15 +178,23 @@ div.node-form .resizable-textarea {
   #edit-title-en-wrapper,
   #edit-title-hu-wrapper,
   #edit-title-wrapper,
-  #edit-field-exhibition-lead-0-value-wrapper,
-  #edit-field-exhibition-lead-en-0-value-wrapper,
-  #edit-field-exhibition-lead-hu-0-value-wrapper,
   #edit-field-exhibition-image-title-en-0-value-wrapper,
   #edit-field-exhibition-image-title-hu-0-value-wrapper,
   #edit-field-exhibition-image-title-0-value-wrapper {
     .half-field;
     .separator;
     margin-bottom: 0.5em !important;
+  }
+
+  //This are wysiwyg fields @todo if necessary, create custom class for half size wysiwyg fields
+  #edit-field-exhibition-lead-0-value-wrapper,
+  #edit-field-exhibition-lead-en-0-value-wrapper,
+  #edit-field-exhibition-lead-hu-0-value-wrapper {
+    border-bottom: 1px solid #CCCCCC;
+    float: left;
+    margin-bottom: 0.5em !important;
+    margin-right: 12px !important;
+    width: 48%;
   }
 
   #edit-field-exhibition-image-artist-en-0-value-wrapper,
