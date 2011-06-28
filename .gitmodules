@@ -4,3 +4,6 @@
 [submodule "sites/all/modules/patched/nodeformsettings"]
 	path = sites/all/modules/patched/nodeformsettings
 	url = git://repos.szantogabor.com/kogabor/nodeformsettings.git
+[submodule "sites/all/modules/custom/backref_check"]
+	path = sites/all/modules/custom/backref_check
+	url = http://git.drupal.org/sandbox/szantog/1203278.git
