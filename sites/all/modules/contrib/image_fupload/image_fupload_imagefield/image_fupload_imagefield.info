@@ -1,4 +1,3 @@
-; $Id: image_fupload_imagefield.info,v 1.7 2009/03/11 21:07:28 grandcat Exp $
 name = Image FUpload (CCK)
 description = "Allows uploading several images all at once to ImageField module"
 core = 6.x
@@ -8,9 +7,9 @@ dependencies[] = content
 dependencies[] = filefield
 dependencies[] = imagefield
 dependencies[] = imagecache
-; Information added by drupal.org packaging script on 2009-04-08
-version = "6.x-3.0-rc2"
+; Information added by drupal.org packaging script on 2011-02-25
+version = "6.x-3.x-dev"
 core = "6.x"
 project = "image_fupload"
-datestamp = "1239195044"
+datestamp = "1298619426"
 
