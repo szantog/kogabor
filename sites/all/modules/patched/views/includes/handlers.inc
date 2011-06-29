@@ -288,8 +288,9 @@ class views_handler extends views_object {
     $this->localization_keys = array(
       $display_id,
       $this->handler_type,
-      $options['table'],
-      $options['field']
+	  // NOTE: use (unique) id instead of field
+      // $options['field']
+  	  $options['id']
     );
 
     $this->unpack_options($this->options, $options);
@@ -313,6 +314,11 @@ class views_handler extends views_object {
         $this->real_field = $options['field'];
       }
     }
+
+    // not sure if this is required
+    if (isset($options['id'])) {
+      $this->id = $options['id'];
+  	}
 
     $this->query = &$view->query;
   }

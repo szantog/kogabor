@@ -26,7 +26,7 @@
 class views_plugin_display extends views_plugin {
   /**
    * The top object of a view.
-   * 
+   *
    * @var view
    */
   var $view = NULL;
@@ -2607,9 +2607,10 @@ class views_plugin_display extends views_plugin {
         $handler_type = $type;
       }
       $handler = views_get_handler($info['table'], $info['field'], $handler_type);
+      // Note: use (unique) $info['id'] instead of $info['field']
       if ($handler) {
         $handler->init($this->view, $info);
-        $handler->unpack_translatables($translatable, array_merge($parents, array($handler_type, $info['table'], $info['field'])));
+        $handler->unpack_translatables($translatable, array_merge($parents, array($handler_type, $info['table'], $info['id'])));
       }
 
       // Prevent reference problems.
