@@ -1,0 +1,151 @@
+<?php
+// $Id: cck_required_single_select.module,v 1.3 2010/04/22 14:02:08 umhbwebservices Exp $
+
+/**
+* @file
+* Much of the "technique" used in this module was determined in response to information found in the Drupal forums, including: 
+* http://groups.drupal.org/node/1839 and http://drupal.org/node/339730
+*/
+
+/**
+* Implementation of hook_menu().
+*/
+function cck_required_single_select_menu() {
+  // Instructions page
+  $items['admin/settings/cck_required_single_select'] = array (
+    'title'            =>  'CCK Required Single Select',
+    'page callback'    =>  'drupal_get_form',
+    'page arguments'   =>  array('cck_required_single_select_admin'),
+    'access arguments' =>  array('administer CCK Required Single Select'),
+    'type'             =>  MENU_NORMAL_ITEM,
+    'file'             =>  'cck_required_single_select.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Function to push to an array right before a specific index or key.
+ * Found at: http://www.php.net/manual/en/function.array-push.php#56479
+ * 
+ * @return array
+ * @param array $src
+ * @param array $in
+ * @param int|string $pos
+*/
+function array_push_before($src,$in,$pos){
+    if(is_int($pos)) $R=array_merge(array_slice($src,0,$pos), $in, array_slice($src,$pos));
+    else{
+        foreach($src as $k=>$v){
+            if($k==$pos)$R=array_merge($R,$in);
+            $R[$k]=$v;
+        }
+    }return $R;
+}
+
+/**
+ * Implementation of hook_form_alter.
+ * Makes necessary changes to specific widgets and defines a new validator function for each form.
+ */
+function cck_required_single_select_form_alter(&$form, &$form_state, $form_id){
+  // If the current form is the CCK Content Field Edit form and the widget type is "optionwidgets_select"...
+  if($form_id=='content_field_edit_form' && $form['#field']['widget']['type']=='optionwidgets_select'){
+    
+    // Add jQuery code to determine whether the field is required and single-value, to determine whether or not to show the Disallowed First Option field.
+    drupal_add_js(drupal_get_path('module','cck_required_single_select').'/disallowed_first_option.js','module');
+    
+    // Define the new form items to enable defining of a custom first option value.
+    $new_form_items['cck_required_single_select_div_start'] = array(
+      '#value'=>'<div id="edit-cck-required-single-select-disallowed-first-option-wrapper">',
+    );
+    $new_form_items['cck_required_single_select_'.$form['#field']['field_name'].'_disallowed_first_option'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Disallowed First Option Value'),
+      '#field_prefix'=>'-',
+      '#field_suffix'=>'-',
+      '#description'=>t('The value that will display at the top of the select list. Default: "Select One".'),
+    );
+    // We have to perform an empty() check because variable_get() uses isset() which evaluates '' as "set".
+    $stored_value = variable_get('cck_required_single_select_'.$form['#field']['field_name'].'_disallowed_first_option','Select One');
+    if(!empty($stored_value)){
+      $new_form_items['cck_required_single_select_'.$form['#field']['field_name'].'_disallowed_first_option']['#default_value'] = $stored_value;
+    }else{
+      $new_form_items['cck_required_single_select_'.$form['#field']['field_name'].'_disallowed_first_option']['#default_value'] = 'Select One';
+    }
+    $new_form_items['cck_required_single_select_div_end'] = array(
+      '#value'=>'</div>',
+    );
+
+    $form['field']['allowed_values_fieldset'] = array_push_before(
+      // $src
+      $form['field']['allowed_values_fieldset'],
+      // $in
+      $new_form_items,
+      //$pos
+      'allowed_values'
+    );
+    
+    $form['#submit'][] = 'cck_required_single_select_content_field_edit_form_submit';
+  }
+  
+  $form_has_been_modified = FALSE;
+  
+  // Add "- Select One -" to the appropriate fields.
+    // Only proceed if the field info has been defined.
+    if(is_array($form['#field_info'])){
+      // Cycle through CCK fields.
+      foreach($form['#field_info'] as $key => $value){
+        // If the field is a select box, is required, and single-value...
+        if($value['widget']['type']=='optionwidgets_select' && $value['required']==1 && !$value['multiple']){
+          // Add "- Select One -" to the allowed values for this field.
+          // (This is necessary to avoid the "An illegal choice has been detected. Please contact the site administrator." error.
+            // We have to perform an empty() check because variable_get() uses isset() which evaluates '' as "set".
+            $stored_value = variable_get('cck_required_single_select_'.$key.'_disallowed_first_option','Select One');
+            if(!empty($stored_value)){
+              $form['#field_info'][$key]['allowed_values'] = "- ".$stored_value." -\n".$form['#field_info'][$key]['allowed_values'];
+            }else{
+              $form['#field_info'][$key]['allowed_values'] = "- Select One -\n".$form['#field_info'][$key]['allowed_values'];
+            }
+          $form_has_been_modified = TRUE;
+        }
+      }
+    }
+  if($form_has_been_modified){
+    // Add the Select One validator function.
+    $form['#validate'][] = 'cck_required_single_select_form_validate';
+  }
+}
+
+/**
+ * Custom submit function for the CCK content_field_edit_form.
+ * Saves the contents of the "Disallowed First Option" field.
+ */
+function cck_required_single_select_content_field_edit_form_submit($form, $form_state){
+  $name = 'cck_required_single_select_'.$form['#field']['field_name'].'_disallowed_first_option';
+  $value = $form['field']['allowed_values_fieldset']['cck_required_single_select_'.$form['#field']['field_name'].'_disallowed_first_option']['#value'];
+  variable_set($name,$value);
+}
+
+/**
+ * Custom validation function.
+ */
+function cck_required_single_select_form_validate($form, $form_state){
+  // Cycle through CCK fields.
+  foreach($form['#field_info'] as $key => $value){
+    $field_info = content_fields($key);
+    // If the field is a select box, is required, and only allows a single value...
+    if($field_info['widget']['type']=='optionwidgets_select' && $value['required']==1 && !$value['multiple']){
+      // Check if the value is "- Select One -". If so...
+        // We have to perform an empty() check because variable_get() uses isset() which evaluates '' as "set".
+        $stored_value = variable_get('cck_required_single_select_'.$key.'_disallowed_first_option','Select One');
+        if(!empty($stored_value)){
+          $disallowed_first_option = $stored_value;
+        }else{
+          $disallowed_first_option = 'Select One';
+        }
+        if($form_state['values'][$key][0]['value']=='- '.$disallowed_first_option.' -'){
+          // Throw a "field required" error.
+          form_set_error('field_division',$field_info['widget']['label'].' field is required');
+        }
+    }
+  }
+}

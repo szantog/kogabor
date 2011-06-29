@@ -1,0 +1,11 @@
+; $Id: cck_required_single_select.info,v 1.2 2010/04/22 14:02:08 umhbwebservices Exp $
+name = Required Single Select
+description = 'Adds a configurable "- Select One -" option to each required, single-value CCK select list.'
+package = CCK
+core = 6.x
+; Information added by drupal.org packaging script on 2010-04-22
+version = "6.x-1.0-beta2"
+core = "6.x"
+project = "cck_required_single_select"
+datestamp = "1271945404"
+
