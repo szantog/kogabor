@@ -1,0 +1,54 @@
+<?php
+
+function cck_required_reference_select_set_required($element, &$form_state){
+  // for reference select
+  $element['#required'] = '1';
+  // for every optionwidgets_select child
+  foreach (element_children($element) as $key1) {
+    $optionwidgets_select = $element[$key1]['#type'] == 'optionwidgets_select' ? $element[$key1] : NULL;
+    if ($optionwidgets_select) {
+      $element[$key1]['#required'] = '1';
+      // for every select child
+      foreach (element_children($optionwidgets_select) as $key2) {
+        $select = $element[$key1][$key2]['#type'] == 'select' ? $element[$key1][$key2] : NULL;
+        if ($select) {
+          $element[$key1][$key2]['#required'] = '1';          
+        } 
+      }
+    }  
+  }
+  return $element;
+}
+
+/**
+ * Implementation of hook_form_alter.
+ */
+function cck_required_reference_select_form_alter(&$form, &$form_state, $form_id){
+  if (isset($form['#field_info'])) {
+    foreach ($form['#field_info'] as $fieldname => $field) {
+      if (in_array($field['widget']['type'], array('nodereference_select', 'userreference_select')) && !$field['multiple']) {
+        // switch off 'required' during build phase
+        if ($form[$fieldname]['#required']) {
+          $form[$fieldname]['#required'] = 0;
+          $form['#field_info'][$fieldname]['required'] = '0';            
+          $form[$fieldname]['#after_build'] = array('cck_required_reference_select_set_required');                                   
+        }
+      } 
+    }
+  }   
+}
+
+function phptemplate_optionwidgets_none($field) {
+  switch ($field['widget']['type']) {
+    case 'optionwidgets_buttons':
+    case 'nodereference_buttons':
+    case 'userreference_buttons':
+      return t('N/A');
+    case 'optionwidgets_select':
+    case 'nodereference_select':
+    case 'userreference_select':
+      return t('- Select One -');
+    default :
+      return '';
+  }
+}

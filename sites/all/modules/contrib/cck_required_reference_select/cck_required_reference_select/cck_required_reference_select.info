@@ -1,0 +1,8 @@
+name = CCK Required Reference Select
+description = 'Adds "- Select One -" option to each required, single-value CCK nodereference and userreference select list.'
+core = 6.x
+
+version = "6.x-1.x-dev"
+package = CCK
+
+dependencies[] = optionwidgets
