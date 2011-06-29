@@ -7,3 +7,6 @@
 [submodule "sites/all/modules/custom/backref_check"]
 	path = sites/all/modules/custom/backref_check
 	url = git://git.drupal.org/sandbox/szantog/1203278.git
+[submodule "sites/all/modules/custom/wysiwyg_gallery"]
+	path = sites/all/modules/custom/wysiwyg_gallery
+	url = https://github.com/hosszukalman/Wysiwyg-gallery.git
