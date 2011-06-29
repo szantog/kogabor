@@ -1,0 +1,7 @@
+; $Id:
+name = UF Gallery Contrib
+description = Custom settings for UF Gallery feature <br/>Created by <a href="http://szantogabor.com">Gabor Szanto</a>
+package = Gabor's modules
+core = 6.x
+
+dependencies[] = features

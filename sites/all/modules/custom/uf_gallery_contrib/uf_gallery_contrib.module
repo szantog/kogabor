@@ -1,0 +1,78 @@
+<?php
+/**
+ * @file
+ *   UF Gallery Contrib
+ *
+ * @version: $Id:
+ *
+ * @developers:
+ *    Gabor Szanto <hello@szantogabor.com>
+ *    http://szantogabor.com
+ */
+
+/**
+ * Implementation of hook_menu().
+ *
+ * @return An array of menu items.
+ */
+function uf_gallery_contrib_menu() {
+  $items['uf-gallery/%node'] = array(
+    'title callback' => 'node_page_title',
+    'title arguments' => array(1),
+    'page callback' => 'node_page_view',
+    'page arguments' => array(1),
+    'access callback' => 'node_access',
+    'access arguments' => array('view', 1),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+function uf_gallery_contrib_theme_registry_alter(&$theme_registry) {
+  $theme_registry['page']['theme paths'][] = drupal_get_path('module', 'uf_gallery_contrib') ;
+  $my_preprocess = array('uf_gallery_contrib_views_slideshow_jcarouselthumbs');
+  $preprocess = array_merge($my_preprocess, $theme_registry['views_slideshow_jcarouselthumbs']['preprocess functions']);
+  $theme_registry['views_slideshow_jcarouselthumbs']['preprocess functions']= $preprocess;
+  //dsm($theme_registry);
+}
+
+function uf_gallery_preprocess_node($vars) {
+  $node = $vars['node'];
+  if ($node->type == 'gallery') {
+    drupal_add_css(drupal_get_path('module', 'uf_gallery_contrib') . '/css/uf_gallery_contrib.css');
+  }
+  //kpr(get_defined_vars());
+}
+
+function uf_gallery_contrib_preprocess_page(&$vars) {
+ /* if (arg(0) == 'uf-gallery') {
+    drupal_add_css(drupal_get_path('module', 'uf_gallery_contrib') . '/css/uf_gallery_contrib.css');
+    $vars['template_file'] = 'uf-gallery-contrib-page' ;
+  }
+  $path = drupal_get_path('module', 'uf_gallery_contrib');
+  //kpr(get_defined_vars());*/
+}
+
+function uf_gallery_contrib_views_pre_render(&$view) {
+ /* if ($view->name == 'pictures_of_gallery' && $view->current_display == 'node_content_1') {
+    //dsm(get_defined_vars());
+    //dsm($view->field['field_picture_fid']);
+    //dsm($view->field['phpcode']);
+  }*/
+}
+
+function uf_gallery_contrib_views_slideshow_jcarouselthumbs(&$vars) {
+  $view = $vars['view'];
+  //$fields = $vars['fields'];
+  //if ($view->name == 'pictures_of_gallery' && $view->current_display == 'node_content_1') {
+    //if ($vars['view']->field['field_picture_description_value']) {
+      //$vars['view']->field['field_picture_fid']->original_value .= $vars['view']->field['field_picture_description_value']->original_value;
+      //unset ($vars['view']->fields['field_picture_description_value']);
+      //dsm($vars['view']->field);
+    //}
+  //dsm(debug_backtrace());
+  //dsm($vars['view']);
+  //}
+ }
+
