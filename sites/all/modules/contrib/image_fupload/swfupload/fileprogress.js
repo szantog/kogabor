@@ -1,4 +1,3 @@
-/* $Id: fileprogress.js,v 1.2 2008/08/23 21:35:26 grandcat Exp $ */
 
 /*
 	File: fileprogress.js
