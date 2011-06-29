@@ -1,0 +1,24 @@
+// $Id: CHANGELOG.txt,v 1.1.2.6 2009/12/27 21:17:49 markuspetrux Exp $
+
+6.x-1.1
+=======
+
+Features:
+- #573824 by robertDouglass: Invoke hook_cck_referential_integrity_update($cached_nids, $updated_fields) to let other module know which nodes have been changed.
+
+
+6.x-1.0
+=======
+
+- No changes.
+
+
+6.x-1.0-beta1
+=============
+
+- #511212 Implement Set NULL for user reference fields.
+- Missing argument in hook_user(). Oops!
+- Optimize UPDATE operation on fields.
+- Fixed set null operation for multiple value fields.
+- Implemented the Orphan references report.
+- Added dependency with the Format Number API, used to format numbers in admin reports.

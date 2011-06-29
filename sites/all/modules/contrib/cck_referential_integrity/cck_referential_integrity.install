@@ -1,0 +1,47 @@
+<?php
+// $Id: cck_referential_integrity.install,v 1.1.2.1 2009/07/06 07:53:05 markuspetrux Exp $
+
+/**
+ * @file
+ * Implementation of installation/uninstallation hooks.
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function cck_referential_integrity_install() {
+  // Notify the content module.
+  drupal_load('module', 'content');
+  content_notify('install', 'cck_referential_integrity');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function cck_referential_integrity_uninstall() {
+  // Delete all module variables and then clear the variables cache.
+  db_query("DELETE FROM {variable} WHERE name LIKE 'cck\_referential\_integrity\_%'");
+  cache_clear_all('variables', 'cache');
+
+  // Notify the content module.
+  drupal_load('module', 'content');
+  content_notify('uninstall', 'cck_referential_integrity');
+}
+
+/**
+ * Implementation of hook_enable().
+ */
+function cck_referential_integrity_enable() {
+  // Notify the content module.
+  drupal_load('module', 'content');
+  content_notify('enable', 'cck_referential_integrity');
+}
+
+/**
+ * Implementation of hook_disable().
+ */
+function cck_referential_integrity_disable() {
+  // Notify the content module.
+  drupal_load('module', 'content');
+  content_notify('disable', 'cck_referential_integrity');
+}

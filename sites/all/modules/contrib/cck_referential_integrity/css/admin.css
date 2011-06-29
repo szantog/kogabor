@@ -1,0 +1,43 @@
+/* $Id: admin.css,v 1.1.2.1 2009/07/12 19:11:18 markuspetrux Exp $ */
+
+/* Cells. */
+.cck-referential-integrity-cell-numeric {
+  padding-right: 1em;
+  text-align: right;
+}
+.cck-referential-integrity-cell-status {
+  text-align: center;
+}
+.cck-referential-integrity-cell-action {
+  padding-right: 0.5em;
+  text-align: right;
+}
+
+/* Icons. */
+div.cck-referential-integrity-status-ok {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url(../images/ok.png) no-repeat 0 0;
+}
+div.cck-referential-integrity-status-warning {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url(../images/warning.png) no-repeat 0 0;
+}
+
+/* Operations. */
+.cck-referential-integrity-operations-backups {
+  float: left;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+.cck-referential-integrity-operations-submit {
+  float: right;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+.cck-referential-integrity-operations-backups .form-item {
+  margin: 0;
+}
