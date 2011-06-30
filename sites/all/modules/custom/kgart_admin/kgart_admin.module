@@ -178,3 +178,25 @@ function kgart_admin_move_node_options($form, &$form_state) {
  //dsm(get_defined_vars());
   return $form;
 }
+
+function kgart_admin_views_query_alter(&$view, &$query) {
+  global $language;
+
+  if ( arg(0) == 'node' && 
+       ( (is_numeric(arg(1)) && arg(2) == 'edit') ||
+         (arg(1) == 'add') )
+      && ( $view->name == 'museumlist' || $view->name == 'citylist') ) {
+   
+    $node = node_load(arg(1));
+    if (!empty($node->language)) {
+      $lang = $node->language;
+    } else if (arg(1)=='add' && !empty($_GET['language']))  {
+      $lang = $_GET['language'];
+    } else {
+      $lang = $language->language; //default user lang
+    }
+
+      $query->where[0]['clauses'][] = 'node.language = \'%s\'';
+      $query->where[0]['args'][] = $lang;
+  }
+}
