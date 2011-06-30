@@ -164,17 +164,17 @@ function kgart_admin_move_node_options($form, &$form_state) {
 
   foreach (element_children($form['field_art_image_path_s']) as $key) {
     $form['field_art_image_path_s'][$key]['value']['#field_prefix'] = '<div class="left">' . $default_image_dir . '/' . variable_get('kgart_image_path_s', $default_image_dir . '/s') . '/</div>';
-    $form['field_art_image_path_s'][$key]['value']['#field_suffix'] = '<div class="left">/' . $node->nid . '+s</div>';
+    $form['field_art_image_path_s'][$key]['value']['#field_suffix'] = '<div class="left">/' . $node->nid . '+s.jpg</div>';
   }
 
   foreach (element_children($form['field_art_image_path_m']) as $key) {
     $form['field_art_image_path_m'][$key]['value']['#field_prefix'] = '<div class="left">' . $default_image_dir . '/' . variable_get('kgart_image_path_m', $default_image_dir . '/m') . '/</div>';
-    $form['field_art_image_path_m'][$key]['value']['#field_suffix'] = '<div class="left">/' . $node->nid . '+m</div>';
+    $form['field_art_image_path_m'][$key]['value']['#field_suffix'] = '<div class="left">/' . $node->nid . '+m.jpg</div>';
   }
 
   foreach (element_children($form['field_art_image_path_l']) as $key) {
     $form['field_art_image_path_l'][$key]['value']['#field_prefix'] = '<div class="left">' . $default_image_dir . '/' . variable_get('kgart_image_path_l', $default_image_dir . '/l') . '/</div>';
-    $form['field_art_image_path_l'][$key]['value']['#field_suffix'] = '<div class="left">/' . $node->nid . '+l</div>';
+    $form['field_art_image_path_l'][$key]['value']['#field_suffix'] = '<div class="left">/' . $node->nid . '+l.jpg</div>';
   }
 
  //dsm(get_defined_vars());
