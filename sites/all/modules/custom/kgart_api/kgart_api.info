@@ -1,0 +1,6 @@
+name = kgart_api
+description = API functions for Kovács Gábor project
+package = kogabor
+core = 6.x
+
+dependencies[] = kgart_admin

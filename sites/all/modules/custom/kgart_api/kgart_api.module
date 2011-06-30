@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ *   kgart_api.module
+ *   API functions for Kovács Gábor project
+ * Project:kogabor
+ *
+ * @developers:
+ *    Gabor Szanto <hello@szantogabor.com>
+ *    http://szantogabor.com
+ *
+ */
+
+/*
+ * This functions is used in art ct computed fields
+ *
+ *
+ */
+function kgart_api_art_image_url($size) {
+  global $base_url;
+  $default_image_dir = variable_get('kgart_image_path', 'images');
+  $dir = $baes_url . '/' . $default_image_dir . '/' . variable_get("kgart_image_path_$size", $default_image_dir . "/$size") ;
+  return $dir;
+}
+
+function computed_field_field_art_image_url_s_compute($node, $field, &$node_field) {
+  //ide még be kell szúrni annak a mezőnek az értékét, ahová ők írhatnak a node formon.
+  $node_field[0]['value'] = kgart_api_art_image_url('s') . '/' . $node->nid . '_s.jpg';
+  dsm(get_defined_vars());
+}
+
+function computed_field_field_art_image_url_s_display($field, $element, $node) {
+  //Ide jön a sminkelés
+  dsm(get_defined_vars());
+  return "hhhoa";
+}
