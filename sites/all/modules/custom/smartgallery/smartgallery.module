@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * Implementation of hook_filter().
+ */
+
+function smartgallery_filter($op, $delta = 0, $format = -1, $text = '', $cache_id = 0) {
+  switch ($op) {
+    case 'list':
+      return array(0 => t('Smartgallery filter'));
+
+    case 'description':
+      return t('Allows users to insert smartgallery nodes and link it to galleries');
+
+    case 'prepare':
+      return $text;
+
+    case "process":
+      $text = preg_replace('@\[smartgallery:(\d+?) fid:(\d+?)\]@se', "smartgallery_process_token('$1', '$2')", $text);
+      return $text;
+
+    default:
+      return $text;
+  }
+}
+
+function smartgallery_process_token($nid, $fid) {   
+  $filepath = db_fetch_object(db_query("SELECT filepath FROM files WHERE fid = '%s'", $fid));    
+  if (is_string($filepath->filepath)) {
+      l(theme('imagecache', 'inline', $filepath->filepath), 'node/'.$nid, array('html'=>TRUE));  
+  } else {
+    return ''; 
+  }
+}
+
+/**
+ * Implementation of function hook_wysiwyg_include_directory().
+ */
+
+function smartgallery_wysiwyg_include_directory($type) {
+  switch ($type) {
+    case 'plugins':
+      return $type;
+  }
+}

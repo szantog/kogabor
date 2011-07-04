@@ -1,0 +1,6 @@
+name = Smart Gallery
+description = Insert gallery link and picture from node via WYSIWYG.
+package = kogabor
+core = 6.x
+
+dependencies[] = wysiwyg
