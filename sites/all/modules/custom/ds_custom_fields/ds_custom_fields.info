@@ -1,0 +1,6 @@
+name = "Display suit custom fields"
+description = "Provide some custom field for display suit <br/>Created by <a href="http://szantogabor.com">Gabor Szanto</a>"
+package = "kogabor"
+core = "6.x"
+
+dependencies[] = ds
