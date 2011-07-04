@@ -35,6 +35,8 @@ function ds_custom_fields_ds_api() {
 function ds_custom_fields_ds_fields($type_name, $build_mode, $extra) {
 
   $fields = array(
+    // *** NOT USED NOW IN THIS PROJECT ***
+    // @todo delete, if never will used
     'comment_links' => array(
       'title' => t('Created + add new comments + comments'),
       'type' => DS_FIELD_TYPE_THEME,
@@ -79,6 +81,16 @@ function ds_custom_fields_ds_fields($type_name, $build_mode, $extra) {
         ),
       ),
     ),
+    'published' => array(
+      'title' => t('Published'),
+      'type' => DS_FIELD_TYPE_THEME,
+      'status' => DS_FIELD_STATUS_STATIC,
+      'properties' => array(
+        'formatters' => array(
+          'dscf_published' => t('Default'),
+        ),
+      ),
+    ),
   );
   //kpr(get_defined_vars());
   return array('nd' => $fields);
@@ -91,6 +103,8 @@ function ds_custom_fields_theme() {
     'arguments' => array('node' => NULL),
     'function' => 'theme_ds_custom_fields_node_links',
   );
+  // *** NOT USED NOW IN THIS PROJECT ***
+  // @todo delete, if never will used
   $theme_functions['dscf_edit_link'] = array(
     'arguments' => array('node' => NULL),
     'function' => 'theme_ds_custom_fields_edit_links',
@@ -103,6 +117,10 @@ function ds_custom_fields_theme() {
     'arguments' => array('node' => NULL),
     'function' => 'theme_ds_custom_fields_nid',
   );
+  $theme_functions['dscf_published'] = array(
+    'arguments' => array('node' => NULL),
+    'function' => 'theme_ds_custom_fields_published',
+  );
   return $theme_functions;
 }
 
@@ -112,6 +130,11 @@ function theme_ds_custom_fields_edit_links($field) {
   }
 }
 
+/*
+ * Theme function to display custom comment links
+ * *** NOT USED NOW IN THIS PROJECT ***
+ * @todo delete, if never will used
+ */
 function theme_ds_custom_fields_node_links($field) {
   //dsm($field);
   return ds_custom_fields_get_node_comment_link($field['object']);
@@ -122,6 +145,31 @@ function theme_gallery_main_picture($field) {
   return $output;
 }
 
+/*
+ * Theme function to display node id.
+ */
+function theme_ds_custom_fields_nid($field) {
+  return $field['object']->nid;
+}
+
+/*
+ * Theme function to display node published state.
+ */
+function theme_ds_custom_fields_published($field) {
+  if ($field['object']->status == 1) {
+    $output = t('Yes');
+  }
+  else {
+    $output = t('No');
+  }
+  return $output;
+}
+
+/*
+ * Theme function to display custom comment links
+ * *** NOT USED NOW IN THIS PROJECT ***
+ * @todo delete, if never will used
+ */
 function ds_custom_fields_get_node_comment_link($node) {
   if (user_access('access comments')) {
     $all = comment_num_all($node->nid);
@@ -163,10 +211,6 @@ function ds_custom_fields_get_node_comment_link($node) {
   $output = '<p>' . t('Posted on ') . format_date($node->created) . ' | ' . $add . ' » ' . $count . ' ' . $new . '</p>';
   //kpr(get_defined_vars());
   return $output;
-}
-
-function theme_ds_custom_fields_nid($field) {
-  return $field['object']->nid;
 }
 
 /*
