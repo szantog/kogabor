@@ -5,4 +5,5 @@ core = 6.x
 
 stylesheets[all][] = css/base.less
 stylesheets[all][] = css/forms.less
+stylesheets[all][] = css/nodes.less
 stylesheets[all][] = css/views-styles.less
