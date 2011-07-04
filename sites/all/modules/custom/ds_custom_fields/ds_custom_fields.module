@@ -101,11 +101,57 @@ function ds_custom_fields_ds_fields($type_name, $build_mode, $extra) {
         ),
       ),
     ),
+    'flag_protected' => array(
+      'title' => t('Protected'),
+      'type' => DS_FIELD_TYPE_THEME,
+      'status' => DS_FIELD_STATUS_STATIC,
+      'properties' => array(
+        'formatters' => array(
+          'dscf_flag_protected' => t('Default'),
+        ),
+      ),
+    ),
+    'flag_sold' => array(
+      'title' => t('Art sold'),
+      'type' => DS_FIELD_TYPE_THEME,
+      'status' => DS_FIELD_STATUS_STATIC,
+      'properties' => array(
+        'formatters' => array(
+          'dscf_flag_sold' => t('Default'),
+        ),
+      ),
+    ),
+    'flag_new_picture' => array(
+      'title' => t('New picture'),
+      'type' => DS_FIELD_TYPE_THEME,
+      'status' => DS_FIELD_STATUS_STATIC,
+      'properties' => array(
+        'formatters' => array(
+          'dscf_flag_new_picture' => t('Default'),
+        ),
+      ),
+    ),
   );
-  //kpr(get_defined_vars());
+// @todo: now
+//  $flags = flag_get_flags('node', $type_name);
+//  foreach ($flags as $flag) {
+//    $fields[$flag->name] = array(
+//      'title' => $flag->title,
+//      'type' => DS_FIELD_TYPE_FUNCTION,
+//      'status' => DS_FIELD_STATUS_STATIC,
+//      'format' => 'dscf_flag',
+//      'properties' => array(
+//        'formatters' => array(
+//          "dscf_flagsaa" => t('Default'),
+//        ),
+//      ),
+//    );
+//  }
+  //dsm(get_defined_vars());
   return array('nd' => $fields);
 
 }
+
 
 function ds_custom_fields_theme() {
   $theme_functions = array();
@@ -135,6 +181,26 @@ function ds_custom_fields_theme() {
     'arguments' => array('node' => NULL),
     'function' => 'theme_ds_custom_fields_promoted',
   );
+  $theme_functions['dscf_flag_protected'] = array(
+    'arguments' => array('node' => NULL),
+    'function' => 'theme_ds_custom_fields_protected',
+  );
+  $theme_functions['dscf_flag_sold'] = array(
+    'arguments' => array('node' => NULL),
+    'function' => 'theme_ds_custom_fields_protected',
+  );
+  $theme_functions['dscf_flag_new_picture'] = array(
+    'arguments' => array('node' => NULL),
+    'function' => 'theme_ds_custom_fields_new_picture',
+  );
+//  $flags = flag_get_flags('node');
+//  foreach ($flags as $flag) {
+//    $theme_functions["dscf_flags_$flag->name"] = array(
+//      'arguments' => array('node' => NULL, 'flag' => $flag),
+//      'function' => 'theme_ds_custom_fields_flags',
+//    );
+//  }
+//  dsm(get_defined_vars());
   return $theme_functions;
 }
 
@@ -191,6 +257,58 @@ function theme_ds_custom_fields_promoted($field) {
   }
   return $output;
 }
+
+function theme_ds_custom_fields_protected($field){
+  $flags = flag_get_counts('node', $field['object']->nid, $reset = TRUE) ;
+  if (array_key_exists('protected', $flags)) {
+    $output = t('Yes');
+  }
+  else {
+    $output = t('No');
+  }
+  //dsm(get_defined_vars());
+  return $output;
+}
+
+function theme_ds_custom_fields_sold($field){
+  $flags = flag_get_counts('node', $field['object']->nid, $reset = TRUE) ;
+  if (array_key_exists('sold', $flags)) {
+    $output = t('Yes');
+  }
+  else {
+    $output = t('No');
+  }
+  //dsm(get_defined_vars());
+  return $output;
+}
+
+function theme_ds_custom_fields_new_picture($field){
+  $flags = flag_get_counts('node', $field['object']->nid, $reset = TRUE) ;
+  if (array_key_exists('new_picture', $flags)) {
+    $output = t('Yes');
+  }
+  else {
+    $output = t('No');
+  }
+  //dsm(get_defined_vars());
+  return $output;
+}
+
+/*
+ * Theme function to display node id.
+ * @todo: tmp abandoned we will use this, when flags are dínamiccaly generated.
+ */
+//function dscf_flags($field, $flag) {
+//  $flags = flag_get_counts('node', $field['object']->nid, $reset = TRUE) ;
+//  if (array_key_exists($field['key'], $flags)) {
+//    $output = t('Yes');
+//  }
+//  else {
+//    $output = t('No');
+//  }
+//  dsm(get_defined_vars());
+//  return $$output;
+//}
 
 /*
  * Theme function to display custom comment links

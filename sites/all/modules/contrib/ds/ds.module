@@ -292,6 +292,7 @@ function ds_build_fields_and_regions(&$object, $module) {
             }
             $function = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : key($field['properties']['formatters']);
             $object->{$key_rendered} = $function($field);
+            dsm(get_defined_vars());
             break;
           case DS_FIELD_TYPE_THEME:
             $format = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : key($field['properties']['formatters']);
