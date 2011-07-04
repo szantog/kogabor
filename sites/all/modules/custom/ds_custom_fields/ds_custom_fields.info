@@ -3,4 +3,5 @@ description = "Provide some custom field for display suit <br/>Created by <a hre
 package = "kogabor"
 core = "6.x"
 
-dependencies[] = ds
+dependencies[] = "ds"
+dependencies[] = "flag"
