@@ -20,18 +20,48 @@
 function kgart_api_art_image_url($size) {
   global $base_url;
   $default_image_dir = variable_get('kgart_image_path', 'images');
-  $dir = $baes_url . '/' . $default_image_dir . '/' . variable_get("kgart_image_path_$size", $default_image_dir . "/$size") ;
+  if(!empty($default_image_dir)) {
+    $dir = $default_image_dir . '/' . variable_get("kgart_image_path_$size", "/$size") ;
+  } else {
+    $dir = variable_get("kgart_image_path_$size", "/$size") ;
+  }
   return $dir;
 }
 
 function computed_field_field_art_image_url_s_compute($node, $field, &$node_field) {
-  //ide még be kell szúrni annak a mezőnek az értékét, ahová ők írhatnak a node formon.
-  $node_field[0]['value'] = kgart_api_art_image_url('s') . '/' . $node->nid . '_s.jpg';
-  dsm(get_defined_vars());
+  if(!empty($node->field_art_image_path_s[0]['value'])) {
+    $node_field[0]['value'] = kgart_api_art_image_url('s') . '/' . $node->field_art_image_path_s[0]['value'] . '/' . $node->nid . '_s.jpg';
+  } else {
+    $node_field[0]['value'] = kgart_api_art_image_url('s') . '/' . $node->nid . '_s.jpg';
+ }
 }
 
 function computed_field_field_art_image_url_s_display($field, $element, $node) {
-  //Ide jön a sminkelés
-  dsm(get_defined_vars());
-  return "hhhoa";
+  return l($node->field_art_image_url_s[0]['value'], $node->field_art_image_url_s[0]['value'], array('absolute'=>TRUE));
 }
+
+function computed_field_field_art_image_url_m_compute($node, $field, &$node_field) {
+  if(!empty($node->field_art_image_path_m[0]['value'])) {
+    $node_field[0]['value'] = kgart_api_art_image_url('m') . '/' . $node->field_art_image_path_m[0]['value'] . '/' . $node->nid . '_m.jpg';
+  } else {
+    $node_field[0]['value'] = kgart_api_art_image_url('m') . '/' . $node->nid . '_m.jpg';
+  }
+}
+
+function computed_field_field_art_image_url_m_display($field, $element, $node) {
+  return l($node->field_art_image_url_m[0]['value'], $node->field_art_image_url_m[0]['value'], array('absolute'=>TRUE));
+}
+
+function computed_field_field_art_image_url_l_compute($node, $field, &$node_field) {
+  if(!empty($node->field_art_image_path_l[0]['value'])) {
+    $node_field[0]['value'] = kgart_api_art_image_url('l') . '/' . $node->field_art_image_path_l[0]['value'] . '/' . $node->nid . '_l.tif';
+  } else {
+    $node_field[0]['value'] = kgart_api_art_image_url('l') . '/' . $node->nid . '_l.tif';
+  }
+}
+
+function computed_field_field_art_image_url_l_display($field, $element, $node) {
+  return l($node->field_art_image_url_l[0]['value'], $node->field_art_image_url_l[0]['value'], array('absolute'=>TRUE));
+}
+
+
