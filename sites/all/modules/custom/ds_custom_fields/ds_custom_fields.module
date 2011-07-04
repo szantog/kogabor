@@ -66,8 +66,16 @@ function ds_custom_fields_ds_fields($type_name, $build_mode, $extra) {
       'properties' => array(
         'formatters' => array(
           'dscf_gallery_main_picture' => t('Default'),
-        //  'dscf_only_comment ' => t('Only comments'),
-        //  'dscf_all' => t('Posted on + comments'),
+        ),
+      ),
+    ),
+    'nid' => array(
+      'title' => t('ID'),
+      'type' => DS_FIELD_TYPE_THEME,
+      'status' => DS_FIELD_STATUS_STATIC,
+      'properties' => array(
+        'formatters' => array(
+          'dscf_nid' => t('Default'),
         ),
       ),
     ),
@@ -90,6 +98,10 @@ function ds_custom_fields_theme() {
   $theme_functions['dscf_gallery_main_picture'] = array(
     'arguments' => array('node' => NULL),
     'function' => 'theme_gallery_main_picture',
+  );
+  $theme_functions['dscf_nid'] = array(
+    'arguments' => array('node' => NULL),
+    'function' => 'theme_ds_custom_fields_nid',
   );
   return $theme_functions;
 }
@@ -153,25 +165,18 @@ function ds_custom_fields_get_node_comment_link($node) {
   return $output;
 }
 
+function theme_ds_custom_fields_nid($field) {
+  return $field['object']->nid;
+}
 
+/*
+ * A sample preprocess function. This isn't used now
+ */
 function ds_custom_fields_preprocess_node(&$vars, $hook) {
   _nd_preprocess_node($vars, $hook);
   $node = $vars['node'];
 
   if ($vars['render_by_ds'] && ($vars['build_mode'] == 'sticky' || $vars['build_mode'] == 'teaser')) {
-    if ($node->field_main_picture['0']['fid']) {
-      unset ($vars['field_audio_link_rendered']);
-      unset ($vars['field_video_link_rendered']);
-      unset ($vars['gallery_main_picture_rendered']);
-    }
-    elseif ($node->field_video_link['0']['embed']) {
-      unset ($vars['field_audio_link_rendered']);
-      unset ($vars['gallery_main_picture_rendered']);
-    }
-    elseif ($node->field_audio_link['0']['embed']) {
-      unset ($vars['gallery_main_picture_rendered']);
-    }
-    $content = ds_render_content($node, 'nd', $vars);
     $vars['content'] = $content;
   }
   //kpr(get_defined_vars());
