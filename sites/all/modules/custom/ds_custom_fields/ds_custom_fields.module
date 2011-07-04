@@ -1,0 +1,178 @@
+<?php
+/**
+ * @file
+ *   Display suit custom fields
+ *
+ * @developers:
+ *    Gabor Szanto <hello@szantogabor.com>
+ *    http://szantogabor.com
+ */
+
+/**
+ * Implementation of hook_ds_api().
+ */
+/*
+function ds_custom_fields_ds_api() {
+
+  return array(
+    'title' => 'Gabors custom fields',
+    'module' => 'ds_custom_fields',
+    'object' => 'node',
+    'views_base' => 'node', // can be either a string or an array.
+    'types' => 'node_get_types',
+    'extra' => array('has_body'),
+    'plugins_exclude' => array(NODE_BUILD_RSS),
+    'regions_single' => array(NODE_BUILD_RSS),
+    'help' => array('Node displays help'),
+    'no_new_build_modes' => TRUE, // Disable creating new build modes. Omit the key if you want it
+  );
+}
+*/
+/**
+ * Implementation of hook_ds_fields().
+ */
+
+function ds_custom_fields_ds_fields($type_name, $build_mode, $extra) {
+
+  $fields = array(
+    'comment_links' => array(
+      'title' => t('Created + add new comments + comments'),
+      'type' => DS_FIELD_TYPE_THEME,
+      'status' => DS_FIELD_STATUS_STATIC,
+      'properties' => array(
+        'formatters' => array(
+          'dscf_default' => t('Default drupal'),
+        //  'dscf_only_comment ' => t('Only comments'),
+        //  'dscf_all' => t('Posted on + comments'),
+        ),
+      ),
+    ),
+    'edit_link' => array(
+      'title' => t('Edit link'),
+      'type' => DS_FIELD_TYPE_THEME,
+      'status' => DS_FIELD_STATUS_STATIC,
+      'properties' => array(
+        'formatters' => array(
+          'dscf_edit_link' => t('Default drupal'),
+        //  'dscf_only_comment ' => t('Only comments'),
+        //  'dscf_all' => t('Posted on + comments'),
+        ),
+      ),
+    ),
+    'gallery_main_picture' => array(
+      'title' => t('Gallery main picture'),
+      'type' => DS_FIELD_TYPE_THEME,
+      'status' => DS_FIELD_STATUS_STATIC,
+      'properties' => array(
+        'formatters' => array(
+          'dscf_gallery_main_picture' => t('Default'),
+        //  'dscf_only_comment ' => t('Only comments'),
+        //  'dscf_all' => t('Posted on + comments'),
+        ),
+      ),
+    ),
+  );
+  //kpr(get_defined_vars());
+  return array('nd' => $fields);
+
+}
+
+function ds_custom_fields_theme() {
+  $theme_functions = array();
+  $theme_functions['dscf_default'] = array(
+    'arguments' => array('node' => NULL),
+    'function' => 'theme_ds_custom_fields_node_links',
+  );
+  $theme_functions['dscf_edit_link'] = array(
+    'arguments' => array('node' => NULL),
+    'function' => 'theme_ds_custom_fields_edit_links',
+  );
+  $theme_functions['dscf_gallery_main_picture'] = array(
+    'arguments' => array('node' => NULL),
+    'function' => 'theme_gallery_main_picture',
+  );
+  return $theme_functions;
+}
+
+function theme_ds_custom_fields_edit_links($field) {
+  if (node_access('update', $field['object'])) {
+    return l(t('edit'), 'node/' . $field['object']->nid . '/edit');
+  }
+}
+
+function theme_ds_custom_fields_node_links($field) {
+  //dsm($field);
+  return ds_custom_fields_get_node_comment_link($field['object']);
+}
+
+function theme_gallery_main_picture($field) {
+  $output = views_embed_view('pictures_of_gallery', 'node_content_3', $field['object']->nid);
+  return $output;
+}
+
+function ds_custom_fields_get_node_comment_link($node) {
+  if (user_access('access comments')) {
+    $all = comment_num_all($node->nid);
+
+    if ($all) {
+      $text = format_plural($all, '1 comment', '@count comments');
+      $path = "node/$node->nid";
+      $options = array(
+        'fragment' => 'comments',
+      );
+      //$count = theme_link($comment_count
+      $count = l($text, $path, $options);
+      $is_new = comment_num_new($node->nid);
+
+      if ($is_new) {
+        $text = format_plural($is_new, '1 new comment', '@count new comments');
+        $path = "node/$node->nid";
+        $options = array(
+          'fragment' => 'new',
+//          'query' => comment_new_page_count($all, $new, $node),
+        );
+        $new = l($text, $path, $options);
+      }
+    }
+    if ($node->comment == COMMENT_NODE_READ_WRITE) {
+      if (user_access('post comments')) {
+        $text = t('Leave a comment');
+        $path = "comment/reply/$node->nid";
+        $options = array(
+          'fragment' => 'comment-form',
+        );
+        $add = l($text, $path, $options);
+      }
+      else {
+        $add = theme('comment_post_forbidden', $node);
+      }
+    }
+  }
+  $output = '<p>' . t('Posted on ') . format_date($node->created) . ' | ' . $add . ' » ' . $count . ' ' . $new . '</p>';
+  //kpr(get_defined_vars());
+  return $output;
+}
+
+
+function ds_custom_fields_preprocess_node(&$vars, $hook) {
+  _nd_preprocess_node($vars, $hook);
+  $node = $vars['node'];
+
+  if ($vars['render_by_ds'] && ($vars['build_mode'] == 'sticky' || $vars['build_mode'] == 'teaser')) {
+    if ($node->field_main_picture['0']['fid']) {
+      unset ($vars['field_audio_link_rendered']);
+      unset ($vars['field_video_link_rendered']);
+      unset ($vars['gallery_main_picture_rendered']);
+    }
+    elseif ($node->field_video_link['0']['embed']) {
+      unset ($vars['field_audio_link_rendered']);
+      unset ($vars['gallery_main_picture_rendered']);
+    }
+    elseif ($node->field_audio_link['0']['embed']) {
+      unset ($vars['gallery_main_picture_rendered']);
+    }
+    $content = ds_render_content($node, 'nd', $vars);
+    $vars['content'] = $content;
+  }
+  //kpr(get_defined_vars());
+}
