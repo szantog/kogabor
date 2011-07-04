@@ -91,6 +91,16 @@ function ds_custom_fields_ds_fields($type_name, $build_mode, $extra) {
         ),
       ),
     ),
+    'promoted' => array(
+      'title' => t('Promoted to front page'),
+      'type' => DS_FIELD_TYPE_THEME,
+      'status' => DS_FIELD_STATUS_STATIC,
+      'properties' => array(
+        'formatters' => array(
+          'dscf_promoted' => t('Default'),
+        ),
+      ),
+    ),
   );
   //kpr(get_defined_vars());
   return array('nd' => $fields);
@@ -120,6 +130,10 @@ function ds_custom_fields_theme() {
   $theme_functions['dscf_published'] = array(
     'arguments' => array('node' => NULL),
     'function' => 'theme_ds_custom_fields_published',
+  );
+  $theme_functions['dscf_promoted'] = array(
+    'arguments' => array('node' => NULL),
+    'function' => 'theme_ds_custom_fields_promoted',
   );
   return $theme_functions;
 }
@@ -157,6 +171,19 @@ function theme_ds_custom_fields_nid($field) {
  */
 function theme_ds_custom_fields_published($field) {
   if ($field['object']->status == 1) {
+    $output = t('Yes');
+  }
+  else {
+    $output = t('No');
+  }
+  return $output;
+}
+
+/*
+ * Theme function to display node promoted state.
+ */
+function theme_ds_custom_fields_promoted($field) {
+  if ($field['object']->promoted == 1) {
     $output = t('Yes');
   }
   else {
