@@ -58,6 +58,37 @@ function kogart_admin_theme_preprocess_page(&$vars) {
     $node = node_load(arg(1));
     $classes_array[] = 'node-type-' . $node->type;
   }
-  
+
   $vars['body_classes'] = implode(' ', $classes_array);
+}
+
+/*
+ * Overriden theme_ds_field function.
+ * This is because of fieldset titles aren't translatable.
+ * @todo: it isn't the best was, but the nd module uses t in template files too
+ */
+function kogart_admin_theme_ds_field($content, $field) {
+  $output = '';
+
+  if (!empty($content)) {
+    if ($field['type'] == 'ds') {
+
+      $output .= '<div class="field '. t($field['class']) .'">';
+      // Above label.
+      if ($field['labelformat'] == 'above') {
+        $output .= '<div class="field-label">'. t($field['title']) .': </div>';
+      }
+      // Inline label
+      if ($field['labelformat'] == 'inline') {
+        $output .= '<div class="field-label-inline-first">'. t($field['title']) .': </div>';
+      }
+      $output .= $content;
+      $output .= '</div>';
+    }
+    else {
+      $output = $content;
+    }
+  }
+
+  return $output;
 }
