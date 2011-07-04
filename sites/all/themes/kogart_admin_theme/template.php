@@ -53,5 +53,11 @@ function kogart_admin_theme_preprocess_page(&$vars) {
   if (arg(0) == 'node' && arg(1) == 'add') {
     $classes_array[] = 'node-type-' . arg(2);
   }
+
+  if (arg(0) == 'node' && is_numeric(arg(1)) && arg(2) == 'datasheet') {
+    $node = node_load(arg(1));
+    $classes_array[] = 'node-type-' . $node->type;
+  }
+  
   $vars['body_classes'] = implode(' ', $classes_array);
 }
