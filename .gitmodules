@@ -10,3 +10,10 @@
 [submodule "sites/all/modules/custom/wysiwyg_gallery"]
 	path = sites/all/modules/custom/wysiwyg_gallery
 	url = https://github.com/hosszukalman/Wysiwyg-gallery.git
+
+
+
+
+[submodule "sites/all/modules/contrib/cck"]
+	path = sites/all/modules/contrib/cck
+	url = git://repos.szantogabor.com/kogabor/cck.git
