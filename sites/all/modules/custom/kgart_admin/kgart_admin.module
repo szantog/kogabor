@@ -75,6 +75,14 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
     if ($type == 'art') {
       //we need manually short some elements.
       $form['#after_build'][] = 'kgart_admin_move_node_options';
+      //We must set empty year field, therefore set the date manual
+      //The year field set empty in kgart_admin_move_node_options() after_build function, then validate to prevent save 1810
+      //Only need in empty node form
+      if (is_null($form['nid']['#value'])) {
+        $form['field_art_date'][0]['#default_value']['value'] = date('Y-m-d', strtotime('1810-01-01')) ;
+        $form['field_art_date'][0]['#default_value']['value2'] = date('Y-m-d', strtotime('1810-12-31')) ;
+        $form['#validate'][] = 'kgart_admin_check_year';
+      }
     }
 
     //Add nid to node forms
@@ -99,7 +107,6 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
         $form['node_ref_subfield_node_content_2'] = array();
       }
     }
-    //dsm(get_defined_vars());
   }
 }
 
@@ -185,8 +192,27 @@ function kgart_admin_move_node_options($form, &$form_state) {
 	}
   }
 
- //dsm(get_defined_vars());
+  //We must empty this field, because of customer need empty year. Therefore must custom validation to prevent save 1810 @see kgart_admin_check_year($form, &$form_state)
+  $form['field_art_date'][0]['value']['year']['#options'][1810] = '';
+  $form['field_art_date'][0]['value2']['year']['#options'][1810] = '';
+
+  //dsm(get_defined_vars());
   return $form;
+}
+
+/*
+ * Validate function for date fields.
+ * We put an empty value in field year to index 1810, it isn't valid year!
+  */
+function kgart_admin_check_year($form, &$form_state) {
+  $date = substr($form_state['values']['field_art_date'][0]['value'], 0, 4);
+  $date2 = substr($form_state['values']['field_art_date'][0]['value2'], 0, 4);
+  if ($date == '1810') {
+    form_set_error('field_art_date][0][value', t('Year is required.'));
+  }
+  if ($date2 == '1810') {
+    form_set_error('field_art_date][0][value2]', t('Year is required.'));
+  }
 }
 
 /*
