@@ -196,6 +196,9 @@ function kgart_admin_move_node_options($form, &$form_state) {
   $form['field_art_date'][0]['value']['year']['#options'][1810] = '';
   $form['field_art_date'][0]['value2']['year']['#options'][1810] = '';
 
+  //This was: Empty 'To date' values will use the 'From date' values.
+  unset($form['field_art_date'][0]['#fieldset_description']);
+
   //dsm(get_defined_vars());
   return $form;
 }
