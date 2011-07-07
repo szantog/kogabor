@@ -360,3 +360,25 @@ ul.tips, div.description, .form-item div.description {
 #edit-field-exhibition-image-0-upload-wrapper {
   clear: left;
 }
+
+//Wysiwyg hack, remove some button
+#edit-field-exhibition-lead-hu-0-value-wrapper,
+#edit-field-exhibition-lead-0-value-wrapper,
+#edit-field-exhibition-lead-en-0-value-wrapper,
+#edit-field-art-published-0-value-wrapper,
+#edit-field-art-reproduced-0-value-wrapper,
+#edit-field-art-note-web-0-value-wrapper,
+#edit-field-art-provenance-0-value-wrapper {
+  table.mce_forecolor,
+  .mce_undo,
+  .mce_redo,
+  .mce_anchor,
+  .mce_cleanup,
+  .mce_hr,
+  .mce_removeformat,
+  .mce_fontsizeselect,
+  .mce_media,
+  .mce_cite {
+    display: none;
+  }
+}
