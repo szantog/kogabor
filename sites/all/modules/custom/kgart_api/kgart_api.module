@@ -64,4 +64,12 @@ function computed_field_field_art_image_url_l_display($field, $element, $node) {
   return l($node->field_art_image_url_l[0]['value'], $node->field_art_image_url_l[0]['value'], array('absolute'=>TRUE));
 }
 
-
+/*
+ * Helper function to increment printed serieal value for overriden theme_serial_formatter_default($element)
+ */
+function kgart_api_inc_serial($value, $number = 5) {
+  while (strlen($value) < $number) {
+    $value = '0' . $value;
+  }
+  return $value;
+}
