@@ -14,6 +14,8 @@
  *   sometimes people use other values in CSVs.
  * @ingroup views_templates
  */
+$output = chr(0xEF) . chr(0xBB) . chr(0xBF); // BOM for UTF-8
+print $output;
 
 // Print out header row, if option was selected.
 if ($options['header']) {
