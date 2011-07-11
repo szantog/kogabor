@@ -289,12 +289,14 @@ class views_handler extends views_object {
     if ($this->view->display_handler->is_defaulted($plural)) {
       $display_id = 'default';
     }
-
+  	if (isset($options['id'])) {
+    	$this->id = $options['id'];
+    }
     $this->localization_keys = array(
       $display_id,
       $this->handler_type,
       $options['table'],
-      $options['field']
+      $options['id']
     );
 
     $this->unpack_options($this->options, $options);
