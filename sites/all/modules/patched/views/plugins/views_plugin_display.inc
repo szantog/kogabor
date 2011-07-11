@@ -2610,6 +2610,8 @@ class views_plugin_display extends views_plugin {
       // Note: use (unique) $info['id'] instead of $info['field']
       if ($handler) {
         $handler->init($this->view, $info);
+//        $handler->unpack_translatables($translatable, array_merge($parents, array($handler_type, $info['table'], $info['id'])));
+//        $handler->unpack_translatables($translatable, array_merge($parents, array($handler_type, $info['table'], $info['field'])));
         $handler->unpack_translatables($translatable, array_merge($parents, array($handler_type, $info['table'], $info['id'])));
       }
 

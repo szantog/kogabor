@@ -290,7 +290,12 @@ class views_handler extends views_object {
       $this->handler_type,
 	  // NOTE: use (unique) id instead of field
       // $options['field']
-  	  $options['id']
+  	  $options['id'],
+      $options['table'],
+    //  $options['field'],
+	  // NOTE: use (unique) id instead of field
+       $options['field']
+//  	  $options['id']
     );
 
     $this->unpack_options($this->options, $options);
@@ -316,9 +321,9 @@ class views_handler extends views_object {
     }
 
     // not sure if this is required
-    if (isset($options['id'])) {
-      $this->id = $options['id'];
-  	}
+ //   if (isset($options['id'])) {
+ //     $this->id = $options['id'];
+//  	}
 
     $this->query = &$view->query;
   }
