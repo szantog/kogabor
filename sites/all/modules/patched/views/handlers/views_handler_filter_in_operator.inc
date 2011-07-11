@@ -375,7 +375,8 @@ class views_handler_filter_in_operator extends views_handler_filter {
     if (!in_array($this->operator, $this->operator_values(1))) {
       $errors[] = t('The operator is invalud');
     }
-    if (is_array($this->value)) {
+    // Don't validate if there are none value options provided, for example for special handlers.
+    if (is_array($this->value) && !isset($this->value_options)) {
       // Remove every element which is not known.
       foreach ($this->value as $value) {
         if (!isset($this->value_options[$value])) {
@@ -388,7 +389,7 @@ class views_handler_filter_in_operator extends views_handler_filter {
       }
     }
     elseif (!empty($this->value) && ($this->operator == 'in' || $this->operator == 'not in')) {
-      $errors[] = t('The value @value is not an array for @operator', array('@value' => views_var_export($this->value), '@operator' => $this->operator));
+      //$errors[] = t('The value @value is not an array for @operator', array('@value' => views_var_export($this->value), '@operator' => $this->operator));
     }
     return $errors;
   }
