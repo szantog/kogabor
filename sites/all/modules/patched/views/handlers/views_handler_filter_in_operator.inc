@@ -368,4 +368,29 @@ class views_handler_filter_in_operator extends views_handler_filter {
 
     $this->query->add_where($this->options['group'], "$field $operator");
   }
+
+  function validate() {
+    $this->get_value_options();
+    $errors = array();
+    if (!in_array($this->operator, $this->operator_values(1))) {
+      $errors[] = t('The operator is invalud');
+    }
+    // Don't validate if there are none value options provided, for example for special handlers.
+    if (is_array($this->value) && !isset($this->value_options)) {
+      // Remove every element which is not known.
+      foreach ($this->value as $value) {
+        if (!isset($this->value_options[$value])) {
+          unset($this->value[$value]);
+        }
+      }
+      // Choose different kind of ouput for 0, a single and multiple values.
+      if (count($this->value) == 0) {
+        $errors[] = t('No valid values found.');
+      }
+    }
+    elseif (!empty($this->value) && ($this->operator == 'in' || $this->operator == 'not in')) {
+      //$errors[] = t('The value @value is not an array for @operator', array('@value' => views_var_export($this->value), '@operator' => $this->operator));
+    }
+    return $errors;
+  }
 }
