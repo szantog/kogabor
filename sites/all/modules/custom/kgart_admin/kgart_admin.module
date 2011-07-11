@@ -94,7 +94,7 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
       '#type' => 'markup',
       '#weight' => -1000,
     );
-    dsm(get_defined_vars());
+
     //@todo This is a tmp solution to put country field via noderef to form
     //By default the fields attaced by views_attach couldn't ordered on node type manage form fields
     //When create an empty array to this form item, de nfc can save it's variable.
