@@ -263,6 +263,11 @@ class views_handler extends views_object {
   var $query = NULL;
 
   /**
+   * The type of the handler, for example filter/footer/field.
+   */
+  var $handler_type = NULL;
+
+  /**
    * init the handler with necessary data.
    * @param $view
    *   The $view object this handler is attached to.
@@ -288,14 +293,8 @@ class views_handler extends views_object {
     $this->localization_keys = array(
       $display_id,
       $this->handler_type,
-	  // NOTE: use (unique) id instead of field
-      // $options['field']
-  	  $options['id'],
       $options['table'],
-    //  $options['field'],
-	  // NOTE: use (unique) id instead of field
-       $options['field']
-//  	  $options['id']
+      $options['field']
     );
 
     $this->unpack_options($this->options, $options);
@@ -319,11 +318,6 @@ class views_handler extends views_object {
         $this->real_field = $options['field'];
       }
     }
-
-    // not sure if this is required
- //   if (isset($options['id'])) {
- //     $this->id = $options['id'];
-//  	}
 
     $this->query = &$view->query;
   }
