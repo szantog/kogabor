@@ -1,0 +1,11 @@
+.page-smartimage #admin-menu {
+  display: none;
+}
+
+.page-smartimage #admin-toolbar {
+  display: none;
+}
+
+.page-smartimage .views-field-nid, .page-smartimage .views-field-fid {
+  display: none;  
+}
