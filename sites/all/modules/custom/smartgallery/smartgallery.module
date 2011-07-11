@@ -51,7 +51,8 @@ function smartgallery_form_alter(&$form, $form_state, $form_id) {
 }
 
 function smartgallery_init() {
-  if($_GET['q'] == 'smartgallery/list') {
+  if($_GET['q'] == 'smartimage/list') {
     modalframe_child_js();
+    drupal_add_css(drupal_get_path('module', 'smartgallery') . '/plugins/smartinsert/smartinsert.css');
   }
 }
