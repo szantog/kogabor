@@ -43,3 +43,15 @@ function smartgallery_wysiwyg_include_directory($type) {
       return $type;
   }
 }
+
+function smartgallery_form_alter(&$form, $form_state, $form_id) {
+  if ($form['#id'] == 'node-form' && ($form['type']['#value'] == 'exhibition' || $form['type']['#value'] == 'art')) {
+    modalframe_parent_js();
+  }
+}
+
+function smartgallery_init() {
+  if($_GET['q'] == 'smartgallery/list') {
+    modalframe_child_js();
+  }
+}
