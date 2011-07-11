@@ -1,0 +1,13 @@
+; $Id: serial.info,v 1.1 2009/10/02 13:59:40 kirsh Exp $
+name = Serial
+description = Defines atomic auto increment (serial) CCK field type.
+dependencies[] = content
+package = CCK
+core = 6.x
+
+; Information added by drupal.org packaging script on January 1, 1970 - 00:00
+version = "6.x-1.0"
+core = "6.x"
+project = "serial"
+datestamp = "1296188218"
+
