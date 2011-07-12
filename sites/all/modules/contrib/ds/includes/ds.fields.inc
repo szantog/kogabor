@@ -1,5 +1,4 @@
 <?php
-// $Id: ds.fields.inc,v 1.1.2.44 2010/10/29 10:02:08 swentel Exp $
 
 /**
  * @file
@@ -322,7 +321,7 @@ function ds_code_field_form_submit($form, &$form_state) {
 
   // Safe field and invalidate cached fields.
   variable_set($module .'_fields', $fields);
-  variable_del('ds_fields_cached');
+  ds_reset_fields_cache();
 
   // Redirect and confirmation message.
   $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/fields';
@@ -481,7 +480,7 @@ function ds_preprocess_field_form_submit($form, &$form_state) {
 
   // Safe field and invalidate cached fields.
   variable_set($module .'_fields', $fields);
-  variable_del('ds_fields_cached');
+  ds_reset_fields_cache();
 
   // Redirect and confirmation message.
   $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/fields';
@@ -671,7 +670,7 @@ function ds_block_field_form_submit($form, &$form_state) {
 
   // Safe field and invalidate cached fields.
   variable_set($module .'_fields', $fields);
-  variable_del('ds_fields_cached');
+  ds_reset_fields_cache();
 
   // Redirect and confirmation message.
   $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/fields';
@@ -725,7 +724,7 @@ function ds_field_delete_reset_form_submit($form, &$form_state) {
   // Save and invalidate fields_cached.
   unset($fields[$form_state['values']['field']]);
   variable_set($module .'_fields', $fields);
-  variable_del('ds_fields_cached');
+  ds_reset_fields_cache();
 
   drupal_set_message(t('Field %field has been !action.', array('%field' => $field_title, '!action' => $action)));
   $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/fields';

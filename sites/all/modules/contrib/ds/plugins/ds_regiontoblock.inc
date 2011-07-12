@@ -1,5 +1,4 @@
 <?php
-// $Id: ds_regiontoblock.inc,v 1.1.2.4 2010/07/06 22:38:40 swentel Exp $
 
 /**
  * @file
@@ -31,7 +30,7 @@ class ds_regiontoblock {
     $regions = ds_regions();
     foreach ($regions as $region => $title) {
       if ($region != 'disabled') {
-        $default_value = ds_default_value($display_settings, $build_mode, 'regiontoblock', 'block', $region, '');
+        $default_value = ds_default_value($display_settings, 'regiontoblock', 'block', $region, '');
         $form['regiontoblock']['region-block-'. $region] = array(
           '#title' => $title,
           '#type' => 'checkbox',
@@ -74,8 +73,13 @@ class ds_regiontoblock {
     $types = $api_info['types']();
     if (!empty($types)) {
       foreach ($types as $type_key => $object) {
-        $display_settings = variable_get($module .'_display_settings_'. $type_key, array());
+        $display_settings = array();
+        $records = db_query("SELECT * FROM {ds_settings} WHERE module = '%s' AND type = '%s'", $module, $type_key);
+        while ($row = db_fetch_object($records)) {
+          $display_settings[$row->build_mode] = unserialize($row->settings);
+        }
         foreach ($display_settings as $build_mode => $settings) {
+
           if (isset($settings['regiontoblock'])) {
             foreach ($settings['regiontoblock']['block'] as $region => $value) {
               if ($value) {
@@ -115,7 +119,7 @@ class ds_regiontoblock {
 
     foreach ($display->all_regions as $region_name => $region_title) {
 
-      $region_to_block = ds_default_value($display_settings, $display->build_mode, 'regiontoblock', 'block', $region_name, FALSE);
+      $region_to_block = ds_default_value($display_settings, 'regiontoblock', 'block', $region_name, FALSE);
 
       if ($region_to_block == TRUE && isset($display->themed_regions[$region_name])) {
         $region_content = $display->themed_regions[$region_name];

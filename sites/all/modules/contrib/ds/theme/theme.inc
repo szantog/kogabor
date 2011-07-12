@@ -1,5 +1,4 @@
 <?php
-// $Id: theme.inc,v 1.1.2.60 2010/09/03 10:38:33 swentel Exp $
 
 /**
  * @file
@@ -111,15 +110,17 @@ function theme_ds_eval_block($field) {
       switch ($field['properties']['render']) {
         case DS_BLOCK_TEMPLATE:
           global $theme_key;
-          $block = (object) $block;
-          $block->region = NULL;
-          $block->module = $module;
-          $block->delta = $delta;
-          $block_title = db_result(db_query("SELECT title FROM {blocks} WHERE module = '%s' AND delta = '%s' AND theme = '%s'", $module, $delta, $theme_key));
-          if (!empty($block_title)) {
-            $block->subject = $block_title == '<none>' ? '' : check_plain($block_title);
+          if ($block['content']) {
+            $block = (object) $block;
+            $block->region = NULL;
+            $block->module = $module;
+            $block->delta = $delta;
+            $block_title = db_result(db_query("SELECT title FROM {blocks} WHERE module = '%s' AND delta = '%s' AND theme = '%s'", $module, $delta, $theme_key));
+            if (!empty($block_title)) {
+              $block->subject = $block_title == '<none>' ? '' : check_plain($block_title);
+            }
+            $content = theme('block', $block);
           }
-          $content = theme('block', $block);
           break;
         case DS_BLOCK_TITLE_CONTENT:
           $content = '<h2 class="block-title">'. $block['subject'] .'</h2>';

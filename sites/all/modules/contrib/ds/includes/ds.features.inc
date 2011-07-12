@@ -1,5 +1,4 @@
 <?php
-// $Id: ds.features.inc,v 1.1.2.17 2010/10/28 14:21:52 swentel Exp $
 
 /**
  * @file
@@ -113,7 +112,27 @@ function ds_features_revert($module = NULL) {
   if ($display_settings = module_invoke($module, 'ds_default_settings')) {
     foreach ($display_settings as $ds_module => $settings) {
       foreach ($settings as $object_type => $setting) {
-        variable_set($ds_module .'_display_settings_'. $object_type, $setting);
+        foreach ($setting as $build_mode => $conf) {
+
+          // Remove old settings.
+          db_query("DELETE FROM {ds_settings} WHERE build_mode = '%s' AND module = '%s' AND type = '%s'", $build_mode, $module, $object_type);
+
+          // Iterate over fields and ditch those which are hidden.
+          // This is for sites have upgraded but haven't re-exported their settings.
+          foreach ($conf['fields'] as $field_key => $field_value) {
+            if ($field_value['region'] == 'disabled') {
+              unset($conf['fields'][$field_key]);
+            }
+          }
+
+          // Save new settings.
+          $record = new stdClass();
+          $record->module = $module;
+          $record->type = $object_type;
+          $record->build_mode = $build_mode;
+          $record->settings = serialize($conf);
+          drupal_write_record('ds_settings', $record);
+        }
       }
     }
   }

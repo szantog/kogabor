@@ -1,5 +1,4 @@
 <?php
-// $Id: ds.groups.inc,v 1.1.2.8 2010/06/08 00:22:20 swentel Exp $
 
 /**
  * @file
@@ -201,7 +200,7 @@ function ds_fieldgroup_form_submit($form, &$form_state) {
 
   // Safe field and invalidate cached fields.
   variable_set($module .'_fields', $fields);
-  variable_del('ds_fields_cached');
+  ds_reset_fields_cache();
 
   // Redirect and confirmation message.
   $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/fieldgroups';
@@ -253,7 +252,7 @@ function ds_fieldgroup_delete_form_submit($form, &$form_state) {
   // Save and invalidate fields_cached.
   unset($fields[$fieldgroup]);
   variable_set($module .'_fields', $fields);
-  variable_del('ds_fields_cached');
+  ds_reset_fields_cache();
 
   drupal_set_message(t('Fieldgroup %fieldgroup has been deleted.', array('%fieldgroup' => $field_title)));
   $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/fieldgroups';

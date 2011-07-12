@@ -1,5 +1,4 @@
 <?php
-// $Id: ds.buildmodes.inc,v 1.1.2.21 2010/06/08 00:22:20 swentel Exp $
 
 /**
  * @file
@@ -187,6 +186,9 @@ function ds_build_mode_delete_form_submit($form, &$form_state) {
   $build_modes = variable_get($module .'_build_modes', array());
   unset($build_modes[$form_state['values']['display']]);
   variable_set($module .'_build_modes', $build_modes);
+
+  // Remove any settings of build modes from the database.
+  db_query("DELETE FROM {ds_settings} WHERE build_mode = '%s' AND module = '%s'", $form_state['values']['display'], $module);
 
   drupal_set_message(t('Custom build mode %build_mode has been removed.', array('%build_mode' => $form_state['values']['display'])));
   $form_state['redirect'] = 'admin/build/ds/'. $module .'/buildmodes';
