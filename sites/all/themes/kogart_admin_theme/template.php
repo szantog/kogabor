@@ -145,7 +145,7 @@ function kogart_admin_theme_admin_tab($tab, $class = '') {
   $title = filter_xss_admin($tab['title']);
   //Now, only the Administer content menu isn't translatable
   //@todo lookup menu names translatain method
-  if ($class = 'menu-menu-content-administer') {
+  if ($class == 'menu-menu-content-administer') {
     $title = t($title);
   }
   return "<div class='admin-tab {$class}'><span {$attr}>{$title}</span></div>";
