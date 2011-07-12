@@ -1,9 +1,8 @@
-; $Id $
-name = "ND location"
-description = "Location support for node displays"
+name = ND Poll
+description = Drupal Core Poll support for Node Displays
 core = "6.x"
 dependencies[] = nd
-dependencies[] = location
+dependencies[] = poll
 package = "Display suite"
 
 ; Information added by drupal.org packaging script on 2011-06-15

@@ -1,5 +1,4 @@
 <?php
-// $Id: nd_cck.module,v 1.1.2.11.2.38 2010/10/28 20:35:45 swentel Exp $
 
 /**
  * @file
@@ -51,19 +50,36 @@ function nd_cck_ds_fields($type_name, $build_mode, $extra) {
       $groups = fieldgroup_groups($type_name);
       if (!empty($groups)) {
         foreach ($groups as $key => $group) {
-          $fields[$key] = array(
-            'title' => $group['label'],
-            'type' => DS_FIELD_TYPE_GROUP,
-            'status' => DS_FIELD_STATUS_STATIC,
-            'properties' => array(
-              'formatters' => array(
-                'ds_field' => 'A simple div',
-                'ds_group_fieldset_open' => 'Fieldset open',
-                'ds_group_fieldset_collapsible' => 'Fieldset collapsible',
-                'ds_group_fieldset_collapsed' => 'Fieldset collapsed',
-              ),
-            ),
-          );
+       		if ($group['group_type'] == 'multigroup') {
+        		$fields[$key] = array(
+              'title' => $group['label'],
+              'type' => DS_FIELD_TYPE_MULTIGROUP,
+              'status' => DS_FIELD_STATUS_STATIC,
+              'properties' => array(
+                'formatters' => array(
+                  'ds_field' => 'A simple div',
+                  'ds_group_fieldset_open' => 'Fieldset open',
+                  'ds_group_fieldset_collapsible' => 'Fieldset collapsible',
+                  'ds_group_fieldset_collapsed' => 'Fieldset collapsed',
+                ),
+							),
+            );
+        	}
+        	else {
+	          $fields[$key] = array(
+	            'title' => $group['label'],
+	            'type' => DS_FIELD_TYPE_GROUP,
+	            'status' => DS_FIELD_STATUS_STATIC,
+           		'properties' => array(
+	              'formatters' => array(
+	                'ds_field' => 'A simple div',
+	                'ds_group_fieldset_open' => 'Fieldset open',
+	                'ds_group_fieldset_collapsible' => 'Fieldset collapsible',
+		              'ds_group_fieldset_collapsed' => 'Fieldset collapsed',
+	              ),
+	            ),
+	          );
+        	}
 
           // Tabs support.
           if (module_exists('tabs')) {
@@ -203,7 +219,49 @@ function nd_cck_theme() {
     }
   }
 
+  // Support Multigroup for CCK 6.x-3.0
+  $theme_functions['nd_cck_multigroup'] =  array(
+		'arguments' => array ('element', 'group'),
+		'function' => 'theme_nd_cck_multigroup'
+	);
+
   return $theme_functions;
+}
+
+/**
+ * Implementation of hook_ds_settings_import().
+ */
+function nd_cck_ds_settings_import($module, $type, $settings) {
+
+  // Only works for Node Displays.
+  if ($module != 'nd') {
+    return;
+  }
+
+  module_load_include('inc', 'content', 'includes/content.crud');
+
+  $info = _content_type_info();
+  $fields = $info['content types'][$type]['fields'];
+
+  foreach ($settings as $build_mode => $settings) {
+    foreach ($settings['fields'] as $field_key => $field_value) {
+      if (isset($fields[$field_key])) {
+        $fields[$field_key]['display_settings'][$build_mode]['weight'] = $field_value['weight'];
+        $fields[$field_key]['display_settings'][$build_mode]['css-class'] = $field_value['css-class'];
+        $fields[$field_key]['display_settings'][$build_mode]['format'] = $field_value['format'];
+        $fields[$field_key]['display_settings'][$build_mode]['label']['format'] = $field_value['labelformat'];
+        $exclude = (isset($field_value['region']) && $field_value['region'] == 'disabled') ? 1 : 0;
+        $fields[$field_key]['display_settings'][$build_mode]['exclude'] = $exclude;
+        if (isset($field_value['label_value'])) {
+          $fields[$field_key]['display_settings'][$build_mode]['label_value'] = $field_value['label_value'];
+        }
+      }
+    }
+  }
+
+  foreach ($fields as $field) {
+    content_field_instance_update($field);
+  }
 }
 
 /**
@@ -232,7 +290,7 @@ function theme_nd_cck_node_formatter($element) {
       return theme('nodereference_formatter_default', $element);
     }
     if ($referenced_node = node_load($element['#item']['nid'])) {
-      if ($referenced_node->status <> 0) {
+      if ($referenced_node->status <> 0 || node_access('view', $referenced_node)) {
         $referenced_node->referencing_node = $node;
         $referenced_node->referencing_field = $field;
         $referenced_node->build_mode = $build_mode;
