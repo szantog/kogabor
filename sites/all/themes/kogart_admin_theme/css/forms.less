@@ -45,33 +45,32 @@ div.node-form .resizable-textarea {
     .m-top;
   }
 
-  .container-inline-date {
-    display: inline-block;
-    //.no-marding;
-    .m-right;
-    .left-label(110px; 80px;);
+  .field_art_date {
 
-    input {
-      .no-marding;
-      //width: 140px !important;
-      .m-right;
+    .container-inline-date {
+      .left;
+      clear: none;
     }
 
-    .form-item .description {
-      width: auto;
+    .date-year {
+      .m-left(10px);
     }
-  }
 
-  #edit-field-art-date-0-value-wrapper,
-  #edit-field-art-date-0-value2-wrapper {
     .date-year,
     .date-month,
     .date-day {
-      margin-left: 15px;
+      float: left;
     }
-  }
-  #edit-field-art-date-0-value2-wrapper {
-    //.left-label(auto; auto;);
+
+    select {
+      width: 70px;
+    }
+
+    .description {
+        float: left;
+        display: block;
+        margin-top: 24px;
+      }
   }
 
   .form-region-main fieldset {
@@ -88,15 +87,7 @@ div.node-form .resizable-textarea {
     }
 
     .description {
-      float: right;
-      width: 160px;
-      .no-marding;
     }
-  }
-
-  fieldset.field_art_date .description {
-    float: none;
-    display: inline;
   }
 
   select {
@@ -186,6 +177,23 @@ div.node-form .resizable-textarea {
   .fieldset-wrapper {
     .separator;
     margin-bottom: 1em !important;
+  }
+
+  .container-inline-date {
+    display: inline-block;
+    .no-marding;
+    .m-right;
+    .left-label(110px; 80px;);
+
+    input {
+      .no-marding;
+      width: 140px !important;
+      .m-right;
+    }
+
+    .form-item .description {
+      width: auto;
+    }
   }
 
   #edit-title-en-wrapper,
