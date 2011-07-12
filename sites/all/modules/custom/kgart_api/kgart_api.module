@@ -37,7 +37,7 @@ function computed_field_field_art_image_url_s_compute($node, $field, &$node_fiel
 }
 
 function computed_field_field_art_image_url_s_display($field, $element, $node) {
-  return l($node->field_art_image_url_s[0]['value'], $node->field_art_image_url_s[0]['value'], array('absolute'=>TRUE, 'external'=>TRUE));
+  return '<a href="'.$node->field_art_image_url_s[0]['value']. '">'. $node->field_art_image_url_s[0]['value']. '</a>';
 }
 
 function computed_field_field_art_image_url_m_compute($node, $field, &$node_field) {
@@ -49,7 +49,7 @@ function computed_field_field_art_image_url_m_compute($node, $field, &$node_fiel
 }
 
 function computed_field_field_art_image_url_m_display($field, $element, $node) {
-  return l($node->field_art_image_url_m[0]['value'], $node->field_art_image_url_m[0]['value'], array('absolute'=>TRUE, 'external'=>TRUE));
+  return '<a href="'.$node->field_art_image_url_m[0]['value']. '">'. $node->field_art_image_url_m[0]['value']. '</a>';
 }
 
 function computed_field_field_art_image_url_l_compute($node, $field, &$node_field) {
@@ -61,7 +61,7 @@ function computed_field_field_art_image_url_l_compute($node, $field, &$node_fiel
 }
 
 function computed_field_field_art_image_url_l_display($field, $element, $node) {
-  return l($node->field_art_image_url_l[0]['value'], $node->field_art_image_url_l[0]['value'], array('absolute'=>TRUE, 'external'=>TRUE));
+  return '<a href="'.$node->field_art_image_url_l[0]['value']. '">'. $node->field_art_image_url_l[0]['value']. '</a>';
 }
 
 /*
