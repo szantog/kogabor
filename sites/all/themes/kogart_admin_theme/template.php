@@ -114,3 +114,24 @@ function kogart_admin_theme_ds_field($content, $field) {
 function kogart_admin_theme_serial_formatter_default($element) {
   return kgart_api_inc_serial($element['#item']['value']);
 }
+
+/**
+ *  Theme from/to date combination on form.
+ */
+function kogart_admin_theme_date_combo($element) {
+  $field = content_fields($element['#field_name'], $element['#type_name']);
+  if (!$field['todate']) {
+    return $element['#children'];
+  }
+
+  // Group from/to items together in fieldset.
+  $fieldset = array(
+    '#title' => check_plain($field['widget']['label']) .' '. ($element['#delta'] > 0 ? intval($element['#delta'] + 1) : ''),
+    '#value' => $element['#children'],
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE,
+    '#description' => $element['#fieldset_description'],
+    '#attributes' => array('class' => $element['#field_name']),
+  );
+  return theme('fieldset', $fieldset);
+}
