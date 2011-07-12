@@ -17,3 +17,6 @@
 [submodule "sites/all/modules/contrib/cck"]
 	path = sites/all/modules/contrib/cck
 	url = git://repos.szantogabor.com/kogabor/cck.git
+[submodule "sites/all/modules/patched/ds"]
+	path = sites/all/modules/patched/ds
+	url = git://repos.szantogabor.com/kogabor/ds.git
