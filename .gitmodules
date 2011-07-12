@@ -20,3 +20,6 @@
 [submodule "sites/all/modules/patched/ds"]
 	path = sites/all/modules/patched/ds
 	url = git://repos.szantogabor.com/kogabor/ds.git
+[submodule "sites/all/modules/patched/nd_contrib"]
+	path = sites/all/modules/patched/nd_contrib
+	url = git://repos.szantogabor.com/kogabor/nd_contrib.git
