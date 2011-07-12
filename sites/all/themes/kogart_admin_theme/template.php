@@ -135,3 +135,18 @@ function kogart_admin_theme_date_combo($element) {
   );
   return theme('fieldset', $fieldset);
 }
+
+/**
+ * Override theme_admin_tab function baceuse of translation issue
+ */
+function kogart_admin_theme_admin_tab($tab, $class = '') {
+  $attr = isset($tab['attributes']) ? drupal_attributes($tab['attributes']) : '';
+  $class .= !empty($tab['active']) ? ' admin-tab-active': '';
+  $title = filter_xss_admin($tab['title']);
+  //Now, only the Administer content menu isn't translatable
+  //@todo lookup menu names translatain method
+  if ($class = 'menu-menu-content-administer') {
+    $title = t($title);
+  }
+  return "<div class='admin-tab {$class}'><span {$attr}>{$title}</span></div>";
+}
