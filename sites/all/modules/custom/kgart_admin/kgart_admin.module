@@ -123,12 +123,15 @@ function kgart_admin_move_node_options($form, &$form_state) {
 
   $form['flag']['status'] = $form['options']['status'];
   $form['flag']['promote'] = $form['options']['promote'];
+  //Add Slide field to fieldset
+  $form['flag'] += $form['field_art_slide'];
 
   $form['flag']['status']['#description'] = t('(This content appears on front)');
   $form['flag']['promote']['#description'] = t('(Deprecated if Kovács Gábor\'s collection)');
 
   unset ($form['options']['status']);
   unset ($form['options']['promote']);
+  unset ($form['field_art_slide']);
 
   //Short flags
   if (isset($form['flag']['protected'])) {
@@ -200,7 +203,7 @@ function kgart_admin_move_node_options($form, &$form_state) {
   //This was: Empty 'To date' values will use the 'From date' values.
   unset($form['field_art_date'][0]['#fieldset_description']);
 
-  //dsm(get_defined_vars());
+  dsm(get_defined_vars());
   return $form;
 }
 
