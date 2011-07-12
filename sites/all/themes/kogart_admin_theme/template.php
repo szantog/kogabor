@@ -63,6 +63,21 @@ function kogart_admin_theme_preprocess_page(&$vars) {
 }
 
 /*
+ * Preprocess function for cck fields
+ */
+function kogart_admin_theme_preprocess_content_field (&$vars) {
+  $node = $vars['node'];
+  //Always need to see field, if it doesn't have value, we show: -
+  if ($node->build_mode == 'data_sheet' && $vars['field_empty'] == TRUE) {
+    $vars['field_empty'] = FALSE;
+    foreach ($vars['items'] as &$item) {
+      $item['view'] = '-';
+      $item['empty'] = FALSE;
+    }
+  }
+}
+
+/*
  * Overriden theme_ds_field function.
  * This is because of fieldset titles aren't translatable.
  * @todo: it isn't the best was, but the nd module uses t in template files too
