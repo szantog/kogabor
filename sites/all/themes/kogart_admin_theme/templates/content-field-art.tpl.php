@@ -43,6 +43,6 @@
       endforeach;?>
     </div>
   <?php else : ?>
-    <?php if ($label_display == 'inline') : ?><div class="field-label-inline-first"><?php print t($label) ?>:&nbsp;</div><?php endif; ?><?php print(!$field_empty ? $items[0]['view'] : '&nbsp;-&nbsp;') ?>
+    <?php if ($label_display == 'inline') : ?><div class="field-label-inline-first"><?php print t($label) ?>:&nbsp;</div><?php endif; ?><?php if(!isset($items[0])): print $items[1]['view']; else : print $items[0]['view']; endif;?>
   <?php endif; ?>
 </div>
