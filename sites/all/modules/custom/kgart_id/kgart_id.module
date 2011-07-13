@@ -154,7 +154,7 @@ function kgart_id_get_tnid($nid) {
   while ($row = db_fetch_array($result)) {
     $results[$row['nid']] = $row['tnid'];
   }
-  if ($results) {
+  if ($results[$nid]) {
     return $results[$nid];
   }
   else {
