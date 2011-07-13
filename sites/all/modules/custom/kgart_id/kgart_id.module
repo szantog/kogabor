@@ -11,21 +11,21 @@
  *    Gabor Szanto <http://drupal.org/user/610310>*
  */
 
-define('ART_PRE', 'art-');
-define('ARTIST_PRE', 'ars-');
-define('CITY_PRE', 'cty-');
-define('COLLECTION_PRE', 'col-');
-define('COUNTRY_PRE', 'cnt-');
-define('EXHIBITION_PRE', 'exh-');
-define('SMARTGALLERY_PRE', 'sgl-');
-define('GALLERY_PRE', 'gal-');
-define('MATERIAL_PRE', 'mat-');
-define('OWNER_PRE', 'own-');
-define('PICTURE_PRE', 'pic-');
-define('PROGRESS_PRE', 'prg-');
-define('SIGN_PRE', 'sgn-');
-define('STORAGE_PRE', 'stp-');
-define('TECHNIQUE_PRE', 'tec-');
+define('ART_PRE', 'ART-');
+define('ARTIST_PRE', 'ARS-');
+define('CITY_PRE', 'CTY-');
+define('COLLECTION_PRE', 'COL-');
+define('COUNTRY_PRE', 'CNT-');
+define('EXHIBITION_PRE', 'EXH-');
+define('SMARTGALLERY_PRE', 'SGL-');
+define('GALLERY_PRE', 'GAL-');
+define('MATERIAL_PRE', 'MAT-');
+define('OWNER_PRE', 'OWN-');
+define('PICTURE_PRE', 'PIC-');
+define('PROGRESS_PRE', 'PRG-');
+define('SIGN_PRE', 'SGN-');
+define('STORAGE_PRE', 'STP-');
+define('TECHNIQUE_PRE', 'TEC-');
 
 define('ART_TRIM', 6);
 define('ARTIST_TRIM', 6);
