@@ -61,14 +61,15 @@ function kgart_admin_menu() {
  * Implementation of hook_form_alter().
  */
 function kgart_admin_form_alter(&$form, $form_state, $form_id) {
-  //dsm($form_id);
+  dsm($form_id);
   global $language;
 
   $disable_submit = array(
     'content_field_overview_form',
     'nodeformcols_configuration_form',
     'content_field_edit_form',
-    'views_ui_edit_view_form'
+    'views_ui_edit_view_form',
+    'content_display_overview_form'
   );
 
   if (in_array($form_id, $disable_submit) && $language != language_default()) {

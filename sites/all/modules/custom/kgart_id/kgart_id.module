@@ -27,6 +27,7 @@ define('PROGRESS_PRE', 'PRG-');
 define('SIGN_PRE', 'SGN-');
 define('STORAGE_PRE', 'STP-');
 define('TECHNIQUE_PRE', 'TEC-');
+define('FP_SLIDESHOW_PRE', 'FPS-');
 
 define('ART_TRIM', 6);
 define('ARTIST_TRIM', 6);
@@ -44,6 +45,7 @@ define('PROGRESS_TRIM', 6);
 define('SIGN_TRIM', 6);
 define('STORAGE_TRIM', 6);
 define('TECHNIQUE_TRIM', 6);
+define('FP_SLIDESHOW_TRIM', 6);
 
 /*
  * The main function of this module, this is used automatic in field_id computed field
@@ -111,6 +113,9 @@ function kgart_id_get_constant($type) {
       break;
     case 'technique':
       return array('pre' => TECHNIQUE_PRE, 'trim' => TECHNIQUE_TRIM);
+      break;
+    case 'fp_slideshow':
+      return array('pre' => FP_SLIDESHOW_PRE, 'trim' => FP_SLIDESHOW_TRIM);
       break;
     default:
       break;
