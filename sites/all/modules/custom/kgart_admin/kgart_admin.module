@@ -63,10 +63,18 @@ function kgart_admin_menu() {
 function kgart_admin_form_alter(&$form, $form_state, $form_id) {
   //dsm($form_id);
   global $language;
-  if ($form_id == 'nodeformcols_configuration_form' && $language != language_default()) {
-    unset($form['submit']);
-  }
 
+  $disable_submit = array(
+    'content_field_overview_form',
+    'nodeformcols_configuration_form',
+    'content_field_edit_form',
+    'views_ui_edit_view_form'
+  );
+
+  if (in_array($form_id, $disable_submit) && $language != language_default()) {
+    unset($form['submit']);
+    drupal_set_message(t('This form could save only on <strong>the default</strong> language! If need some fix, use _form_alter, look at kgart_admin module!'), 'warning');
+  }
   if ($form['#id'] == 'node-form') {
     $type = $form['type']['#value'] ;
     $type_name = check_plain(node_get_types('name', $type));
