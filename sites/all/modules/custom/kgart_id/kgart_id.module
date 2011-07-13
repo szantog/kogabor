@@ -43,18 +43,19 @@ define('SIGN_TRIM', 6);
 define('STORAGE_TRIM', 6);
 define('TECHNIQUE_TRIM', 6);
 
-function kgart_id_generate_id($node) {
-  $constants = kgart_id_get_constant($node->type);
-  $nid = kgart_id_get_tnid($node->nid) ;
-  $id = $constants['pre'] . kgart_id_inc_serial($nid, $constants['trim']);
-  return $id;
+/*
+ * The main function of this module, this is used automatic in field_id computed field
+ */
+function computed_field_field_id_compute($node, $field, &$node_field) {
+  $node_field[0]['value'] = kgart_id_generate_id($node);
 }
 
 /*
  * Helper function to get defined constant value per node type.
  *
  * @param string $type The node type
- * @return string The constants value
+ * @return string
+ *   The constants value
  */
 function kgart_id_get_constant($type) {
   switch($type) {
@@ -111,6 +112,27 @@ function kgart_id_get_constant($type) {
   }
 }
 
+/*
+ * Generate ID based on node's traslation nid and defined constants
+ *
+ * @return string
+ *   The generated id
+ */
+function kgart_id_generate_id($node) {
+  $constants = kgart_id_get_constant($node->type);
+  $nid = kgart_id_get_tnid($node->nid) ;
+  $id = $constants['pre'] . kgart_id_inc_serial($nid, $constants['trim']);
+  return $id;
+}
+
+/*
+ * String function to complete a number with zeros
+ *
+ * @param $value
+ *   The input string
+ * @return string
+ *   The 6 letters string like 000215
+ */
 function kgart_id_inc_serial($value, $number = 6) {
   while (strlen($value) < $number) {
     $value = '0' . $value;
@@ -118,10 +140,14 @@ function kgart_id_inc_serial($value, $number = 6) {
   return $value;
 }
 
-function computed_field_field_id_compute($node, $field, &$node_field) {
-  $node_field[0]['value'] = kgart_id_generate_id($node);
-}
-
+/*
+ * Helper function to get a node's translation nid
+ *
+ * @param $nid
+ *   The node ID
+ * @return integer
+ *   The node's translation nid
+ */
 function kgart_id_get_tnid($nid) {
   $query = "SELECT n.nid, n.tnid FROM {node} n WHERE n.nid = %d";
   $result = db_query($query, $nid);
