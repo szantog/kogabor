@@ -124,7 +124,7 @@ function kgart_admin_move_node_options($form, &$form_state) {
   $form['flag']['status'] = $form['options']['status'];
   $form['flag']['promote'] = $form['options']['promote'];
   //Add Slide field to fieldset
-  $form['flag'] += $form['field_art_slide'];
+  $form['flag']['field_art_slide'] = $form['field_art_slide'];
 
   $form['flag']['status']['#description'] = t('(This content appears on front)');
   $form['flag']['promote']['#description'] = t('(Deprecated if Kovács Gábor\'s collection)');
@@ -162,9 +162,9 @@ function kgart_admin_move_node_options($form, &$form_state) {
 
   //Hide the form options fieldset if user doesn't acces form element sticky.
   //The others are mived to flag, so it's an empty fieldset in this case.
-  if($form['options']['sticky']['#access'] == FALSE) {
-    $form['options']['#access'] = FALSE;
-  }
+//  if($form['options']['sticky']['#access'] == FALSE) {
+//    $form['options']['#access'] = FALSE;
+//  }
 
 
   $default_image_dir = variable_get('kgart_image_path', 'images');

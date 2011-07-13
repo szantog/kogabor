@@ -111,9 +111,9 @@ function kogart_admin_theme_ds_field($content, $field) {
 /**
  * Theme function for 'default' serial field formatter.
  */
-function kogart_admin_theme_serial_formatter_default($element) {
-  return kgart_api_inc_serial($element['#item']['value']);
-}
+//function kogart_admin_theme_serial_formatter_default($element) {
+//  return kgart_api_inc_serial($element['#item']['value']);
+//}
 
 /**
  *  Theme from/to date combination on form.
