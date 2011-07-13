@@ -74,7 +74,7 @@ function kgart_id_get_constant($type) {
     case 'city':
       return array('pre' => CITY_PRE, 'trim' => CITY_TRIM);
       break;
-    case 'county':
+    case 'country':
       return array('pre' => COUNTRY_PRE, 'trim' => COUNTRY_TRIM);
       break;
     case 'exhibition':
