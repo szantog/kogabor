@@ -20,6 +20,7 @@ define('EXHIBITION_PRE', 'EXH-');
 define('SMARTGALLERY_PRE', 'SGL-');
 define('GALLERY_PRE', 'GAL-');
 define('MATERIAL_PRE', 'MAT-');
+define('MUSEUM_PRE', 'MUS-');
 define('OWNER_PRE', 'OWN-');
 define('PICTURE_PRE', 'PIC-');
 define('PROGRESS_PRE', 'PRG-');
@@ -36,6 +37,7 @@ define('EXHIBITION_TRIM', 6);
 define('SMARTGALLERY_TRIM', 6);
 define('GALLERY_TRIM', 6);
 define('MATERIAL_TRIM', 6);
+define('MUSEUM_TRIM', 6);
 define('OWNER_TRIM', 6);
 define('PICTURE_TRIM', 6);
 define('PROGRESS_TRIM', 6);
@@ -88,6 +90,9 @@ function kgart_id_get_constant($type) {
       break;
     case 'material':
       return array('pre' => MATERIAL_PRE, 'trim' => MATERIAL_TRIM);
+      break;
+    case 'museum':
+      return array('pre' => MUSEUM_PRE, 'trim' => MUSEUM_TRIM);
       break;
     case 'owner':
       return array('pre' => OWNER_PRE, 'trim' => OWNER_TRIM);
