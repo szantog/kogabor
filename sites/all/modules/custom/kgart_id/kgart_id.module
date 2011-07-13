@@ -54,7 +54,7 @@ function computed_field_field_id_compute($node, $field, &$node_field) {
  * Helper function to get defined constant value per node type.
  *
  * @param string $type The node type
- * @return string
+ * @return array('pre', 'trim')
  *   The constants value
  */
 function kgart_id_get_constant($type) {
