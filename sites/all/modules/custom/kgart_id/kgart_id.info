@@ -1,0 +1,4 @@
+name = kgart_id
+description = Special id generation for Kovács Gábor's project contents
+package = kogabor
+core = 6.x

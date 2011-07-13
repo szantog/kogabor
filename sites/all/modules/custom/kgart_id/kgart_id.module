@@ -1,0 +1,132 @@
+<?php
+
+/**
+ * kgart_id.module
+ * Project:Young Elements
+ * This module is used to create custom id's specified by content types
+ * The id generating method is three character abbrevation of content type name + $node->nid based 6 digit count
+ * Like: art-000001
+ *
+ * @author
+ *    Gabor Szanto <http://drupal.org/user/610310>*
+ */
+
+define('ART_PRE', 'art-');
+define('ARTIST_PRE', 'ars-');
+define('CITY_PRE', 'cty-');
+define('COLLECTION_PRE', 'col-');
+define('COUNTRY_PRE', 'cnt-');
+define('EXHIBITION_PRE', 'exh-');
+define('SMARTGALLERY_PRE', 'sgl-');
+define('GALLERY_PRE', 'gal-');
+define('MATERIAL_PRE', 'mat-');
+define('OWNER_PRE', 'own-');
+define('PICTURE_PRE', 'pic-');
+define('PROGRESS_PRE', 'prg-');
+define('SIGN_PRE', 'sgn-');
+define('STORAGE_PRE', 'stp-');
+define('TECHNIQUE_PRE', 'tec-');
+
+define('ART_TRIM', 6);
+define('ARTIST_TRIM', 6);
+define('CITY_TRIM', 6);
+define('COLLECTION_TRIM', 6);
+define('COUNTRY_TRIM', 6);
+define('EXHIBITION_TRIM', 6);
+define('SMARTGALLERY_TRIM', 6);
+define('GALLERY_TRIM', 6);
+define('MATERIAL_TRIM', 6);
+define('OWNER_TRIM', 6);
+define('PICTURE_TRIM', 6);
+define('PROGRESS_TRIM', 6);
+define('SIGN_TRIM', 6);
+define('STORAGE_TRIM', 6);
+define('TECHNIQUE_TRIM', 6);
+
+function kgart_id_generate_id($node) {
+  $constants = kgart_id_get_constant($node->type);
+  $nid = kgart_id_get_tnid($node->nid) ;
+  $id = $constants['pre'] . kgart_id_inc_serial($nid, $constants['trim']);
+  return $id;
+}
+
+/*
+ * Helper function to get defined constant value per node type.
+ *
+ * @param string $type The node type
+ * @return string The constants value
+ */
+function kgart_id_get_constant($type) {
+  switch($type) {
+    case 'art':
+      return array('pre' => ART_PRE, 'trim' => ART_TRIM);
+      break;
+    case 'artist':
+      return array('pre' => ARTIST_PRE, 'trim' => ARTIST_TRIM);
+      break;
+    case 'city':
+      return array('pre' => CITY_PRE, 'trim' => CITY_TRIM);
+      break;
+    case 'collection':
+      return array('pre' => COLLECTION_PRE, 'trim' => COLLECTION_TRIM);
+      break;
+    case 'city':
+      return array('pre' => CITY_PRE, 'trim' => CITY_TRIM);
+      break;
+    case 'county':
+      return array('pre' => COUNTRY_PRE, 'trim' => COUNTRY_TRIM);
+      break;
+    case 'exhibition':
+      return array('pre' => EXHIBITION_PRE, 'trim' => EXHIBITION_TRIM);
+      break;
+    case 'smartgallery':
+      return array('pre' => SMARTGALLERY_PRE, 'trim' => SMARTGALLERY_TRIM);
+      break;
+    case 'gallery':
+      return array('pre' => GALLERY_PRE, 'trim' => GALLERY_TRIM);
+      break;
+    case 'material':
+      return array('pre' => MATERIAL_PRE, 'trim' => MATERIAL_TRIM);
+      break;
+    case 'owner':
+      return array('pre' => OWNER_PRE, 'trim' => OWNER_TRIM);
+      break;
+    case 'picture':
+      return array('pre' => PICTURE_PRE, 'trim' => PICTURE_TRIM);
+      break;
+    case 'progress':
+      return array('pre' => PROGRESS_PRE, 'trim' => PROGRESS_TRIM);
+      break;
+    case 'sign':
+      return array('pre' => SIGN_PRE, 'trim' => SIGN_TRIM);
+      break;
+    case 'storage':
+      return array('pre' => STORAGE_PRE, 'trim' => STORAGE_TRIM);
+      break;
+    case 'technique':
+      return array('pre' => TECHNIQUE_PRE, 'trim' => TECHNIQUE_TRIM);
+      break;
+    default:
+      break;
+  }
+}
+
+function kgart_id_inc_serial($value, $number = 6) {
+  while (strlen($value) < $number) {
+    $value = '0' . $value;
+  }
+  return $value;
+}
+
+function computed_field_field_id_compute($node, $field, &$node_field) {
+  $node_field[0]['value'] = kgart_id_generate_id($node);
+}
+
+function kgart_id_get_tnid($nid) {
+  $query = "SELECT n.nid, n.tnid FROM {node} n WHERE n.nid = %d";
+  $result = db_query($query, $nid);
+  while ($row = db_fetch_array($result)) {
+    $results[$row['nid']] = $row['tnid'];
+  }
+  return $results[$nid];
+}
