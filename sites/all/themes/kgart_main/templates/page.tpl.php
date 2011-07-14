@@ -180,9 +180,9 @@
 
         <?php print $content_top; ?>
 
-        <div id="content-area">
+          <div id="content-area"><div class="section">
           <?php print $content; ?>
-        </div>
+        </div></div>
 
         <?php print $content_bottom; ?>
 
