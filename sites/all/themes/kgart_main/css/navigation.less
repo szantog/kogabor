@@ -4,6 +4,7 @@
  *
  * Default menu styling (ul.menu) is defined in system-menus.css.
  */
+ @import 'base.less';
 
 
 /*
@@ -17,6 +18,16 @@ li a.active {
  * Navigation bar
  */
 #navigation {
+  height: 30px;
+  background: url(../images/navigation.png) repeat-x;
+  border-top: 1px solid @border-color3;
+
+  .section {
+    .p-left(155px);
+  }
+  a {
+    color: #fff;
+  }
 }
 
 .region-navigation {

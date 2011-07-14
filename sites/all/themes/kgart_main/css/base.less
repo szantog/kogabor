@@ -62,7 +62,7 @@
  * Grid system variables
  */
 @grid-count: 24; /* 12, 16, or 24 */
-@width: 800px;
+@width: 880px;
 @grid-margin: 12px; /* 12 and 16 columns margin */
 //@grid-margin: 5px; /* 24 colums grid margin, uncomment it, and comment the previous, if you use this */
 @grid-step: @width / @grid-count ;
@@ -111,7 +111,9 @@
 
 @content: @page; /* The content wrapper background, can be changed to background picture */
 
-@border-color: #595959;
+@border-color: #595959; //header top
+@border-color2: #757572; //header bottom
+@border-color3: #cecece; //navigation top
 
 /*
  * Aliases
@@ -209,6 +211,9 @@
   text-transform: lowercase;
 }
 
+.smaller {
+  font-size: 12px;
+}
 /* Block aliases */
 
 .block {

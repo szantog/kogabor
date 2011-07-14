@@ -44,12 +44,17 @@ body {
   height: @header;
   margin-top: 3px;
   border-top: 1px solid @border-color;
+  border-bottom: 1px solid @border-color2;
   background: url(../images/header.png) repeat-x;
   height: 79px;
 }
 
 #header .section {
-  .grid(16);
+  .grid(24);
+}
+
+.region-header {
+  float: right;
 }
 
 #search-box {

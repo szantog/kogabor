@@ -2,7 +2,7 @@
  * @file
  * Block Styling
  */
-
+ @import 'base.less';
 
 .block /* Block wrapper */ {
   margin-bottom: 1em;
@@ -93,4 +93,27 @@
 }
 
 #block-user-3 /* "Who's online" block for a list of the online users */ {
+}
+
+#block-locale-0 {
+  .smaller;
+  .clearfix;
+  float: right;
+
+  li {
+    list-style: none;
+    float: left;
+    .m-right(@grid-margin / 2);
+
+    &.first
+      {
+      a {
+        .p-right(@grid-margin / 2);
+      }
+      &:after {
+        content: "|";
+      }
+    }
+  }
+  .
 }
