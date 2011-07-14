@@ -80,15 +80,15 @@ body {
 #content,
 .no-sidebars #content {
   float: left; /* LTR */
-  width: @width - 2 * @grid-margin;
-  margin-left: @grid-margin; /* LTR */
+  width: @width;
+  //margin-left: @grid-margin; /* LTR */
   margin-right: -1 * @width; /* LTR */ /* Negative value of #content's width + left margin. */
   padding: 0; /* DO NOT CHANGE. Add padding or margin to #content .section. */
 }
 
 .sidebar-first #content {
-  width: @width - @left-sidebar - 4 * @grid-margin;
-  margin-left: @left-sidebar + 3 * @grid-margin; /* LTR */ /* The width of .region-sidebar-first. */
+  width: @width - @left-sidebar - 2 * @grid-margin;
+  //margin-left: @left-sidebar + 3 * @grid-margin; /* LTR */ /* The width of .region-sidebar-first. */
   margin-right: -1 * @width; /* LTR */ /* Negative value of #content's width + left margin. */
 }
 

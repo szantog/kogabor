@@ -18,15 +18,20 @@ li a.active {
  * Navigation bar
  */
 #navigation {
-  height: 30px;
   background: url(../images/navigation.png) repeat-x;
   border-top: 1px solid @border-color3;
 
   .section {
     .p-left(155px);
   }
+  li {
+    .no-padding;
+  }
+
   a {
     color: #fff;
+    line-height: 25px;
+    padding: 0 10px;
   }
 }
 
