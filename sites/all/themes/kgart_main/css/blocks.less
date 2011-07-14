@@ -117,3 +117,46 @@
   }
   .
 }
+
+#footer .block {
+  float: left;
+  width: @width / 2;
+  .smaller;
+
+  .block-inner {
+    padding: @grid-margin * 2;
+  }
+
+  &.eve_n .block-inner{
+    .p-right(@grid-margin);
+  }
+  &.od_d .block-inner{
+    .p-left(@grid-margin);
+  }
+
+  h2.title {
+    .smaller;
+    width: 100%;
+    color: @link;
+    border-bottom: 1px solid @border-color3;
+    line-height: 18px;
+  }
+
+  ul {
+    margin: @grid-margin 0 0 0;
+    padding: 0;
+  }
+  li {
+    list-style: none;
+    float: left;
+  }
+  a {
+    color: #3d3d3d;
+    .p-right(16px);
+
+    &:hover,
+    &:focus {
+      color: @link;
+    }
+  }
+}
