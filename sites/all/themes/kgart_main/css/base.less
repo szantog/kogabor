@@ -61,9 +61,9 @@
 /*
  * Grid system variables
  */
-@grid-count: 16; /* 12, 16, or 24 */
+@grid-count: 24; /* 12, 16, or 24 */
 @width: 800px;
-@grid-margin: 10px; /* 12 and 16 columns margin */
+@grid-margin: 12px; /* 12 and 16 columns margin */
 //@grid-margin: 5px; /* 24 colums grid margin, uncomment it, and comment the previous, if you use this */
 @grid-step: @width / @grid-count ;
 @first-width: (@width - (2 * @grid-margin * @grid-count)) / @grid-count;;
@@ -110,6 +110,8 @@
 @link-active: @link;
 
 @content: @page; /* The content wrapper background, can be changed to background picture */
+
+@border-color: #595959;
 
 /*
  * Aliases
