@@ -1,0 +1,64 @@
+
+table.aef_exposed .form-item {
+  margin:0;
+}
+
+table.aef_exposed td {
+  padding:0 0.5em;
+}
+
+table.aef_exposed tbody {
+  border: 0;
+}
+
+.aef_exposed_form ul li {
+  padding: 0;
+}
+
+.aef_group_operator .form-item {
+  float: left;
+  padding-right: 4px;
+}
+
+fieldset.aef_applied_filters div.description div.form-item,
+fieldset.aef_applied_filters div.description span,
+tr.aef_group span,
+tr.aef_group .form-item {
+  float: left;
+  padding: 0px;
+  margin: 0px;
+  margin-right: 3px;
+}
+
+.aef_all_groups_operator .clear {
+  clear: both;
+}
+
+.aef_left div {
+  float: left;
+}
+
+.aef_right {
+  text-align: right;
+}
+
+td.aef_right span,
+td.aef_right .form-item {
+  float: right;
+}
+
+.aef_buttons {
+  clear: both;
+}
+
+.aef_buttons input {
+  float: left;
+}
+
+#edit-new-group {
+  float: right !important;
+}
+.aef_hidden,
+.region-populated {
+  display: none;
+}

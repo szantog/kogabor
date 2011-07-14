@@ -1,0 +1,14 @@
+name = Advanced Exposed Forms
+description = Allow users to apply exposed filters multiple times using AND and OR operators
+dependencies[] = views
+package = Views
+core = 6.x
+version = 6.x-dev
+php = 5.0
+
+; Information added by drupal.org packaging script on 2011-02-25
+version = "6.x-1.x-dev"
+core = "6.x"
+project = "aef"
+datestamp = "1298618816"
+

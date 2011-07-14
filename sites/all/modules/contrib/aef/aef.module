@@ -1,0 +1,89 @@
+<?php
+
+/**
+ * Implementation of hook_views_api().
+ */
+function aef_views_api() {
+  return array(
+    'api' => 3.0,
+  );
+}
+
+/**
+ * Implementation of hook_help().
+ */
+function aef_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#aef':
+      return '<p>' . t('Advanced Exposed Forms (AEF) provides fine grained dynamic
+              data filtering by allowing the aggregation of views exposed filters
+              into groups. AEF provides AND/OR operators between individual exposed
+              filters and between groups of exposed filters.') .'</p>
+              <h3>'. t('AEF will allow one to:') .'</h3>
+              <ul>
+              <li>'. t('Filter users, content and comments using views exposed filters in a "sticky"
+              way by filtering a filtered set of data.') .'</li>
+              <li>'. t('Provide AND/OR operators between individual exposed filters.') .'</li>
+              <li>'. t('Aggregate exposed filters into groups.') .'</li>
+              <li>'. t('Provide AND/OR operators between groups of aggregated filters.') .'</li>
+              <li>'. t('Apply the same exposed filter multiple times using different values.') .'</li>
+              <li>' .t('Provide a more specific level of filtering data.') .'</li>
+              <li>'. t('Provide a dynamic jquery interface to allow:') .
+                '<ul>
+                  <li>'. t('Re-ordering of filters within groups.') .'</li>
+                  <li>'. t('Moving filters between groups.') .'</li>
+                  <li>'. t('Removal of individual filters.') .'</li>
+                </ul>
+              </li>
+              </ul>';
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function aef_theme() {
+  return array(
+    'aef_dynamic' => array(
+      'arguments' => array('form' => NULL),
+      'file' => 'aef.theme.inc',
+      'template' => 'aef-dynamic',
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_views_pre_execute().
+ *
+ * If all_groups_operator is OR, we have to ensure that non exposed filters
+ * and arguments groups are joined using AND. If not, when user select
+ * OR as all_groups_operator non exposed filters may be not applied if
+ * at least one exposed filter apply.
+ */
+function aef_views_pre_execute(&$view) {
+  $exposed_form = $view->display_handler->get_plugin('exposed_form');
+  if (isset($exposed_form->definition['type']) && $exposed_form->definition['type'] == 'dynamic') {
+    if ($exposed_form->session['all_groups_operator'] != 'AND') {
+      $group_for_arguement = 0;
+      $group_for_non_exposed_filters = 0;
+      foreach ($view->argument as $id => $handler) {
+        $group_for_argument = 1;
+      }
+
+      foreach ($view->filter as $id => $handler) {
+        if ($handler->options['group_type'] == 'group') {
+          if (empty($handler->options['exposed'])) {
+            $group_for_non_exposed_filters = 1;
+          }
+        }
+      }
+      $replace = $group_for_argument + $group_for_non_exposed_filters;
+      if ($replace) {
+        $replace_op = $view->query->group_operator;
+        $view->build_info['query'] = preg_replace(array("/\ ". $replace_op ."\ /"), array(' AND '), $view->build_info['query'], $replace);
+        $view->build_info['count_query'] = preg_replace(array("/\ ". $replace_op ."\ /"), array(' AND '), $view->build_info['count_query'], $replace);
+      }
+    }
+  }
+}
