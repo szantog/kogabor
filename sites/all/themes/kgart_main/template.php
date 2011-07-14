@@ -157,3 +157,58 @@ function kgart_main_preprocess_block(&$vars, $hook) {
   $vars['sample_variable'] = t('Lorem ipsum.');
 }
 // */
+
+/**
+ * Views Slideshow: "previous" control.
+ * Overidden theme function, because of we need some txet change
+ *
+ * @ingroup themeable
+ */
+function kgart_main_views_slideshow_singleframe_control_previous($vss_id, $view, $options) {
+  if ($vss_id == 'front_page_slideshow-block_1') {
+    return l(t('Previous picture'), '#', array(
+      'attributes' => array(
+        'class' => 'views_slideshow_singleframe_previous views_slideshow_previous',
+        'id' => "views_slideshow_singleframe_prev_" . $vss_id,
+      ),
+      'fragment' => ' ',
+      'external' => TRUE,
+    ));
+  }
+  return l(t('Previous'), '#', array(
+    'attributes' => array(
+      'class' => 'views_slideshow_singleframe_previous views_slideshow_previous',
+      'id' => "views_slideshow_singleframe_prev_" . $vss_id,
+    ),
+    'fragment' => ' ',
+    'external' => TRUE,
+  ));
+}
+
+/**
+ * Views Slideshow: "next" control.
+ * Overidden theme function, because of we need some txet change
+ *
+ * @ingroup themeable
+ */
+function kgart_main_views_slideshow_singleframe_control_next($vss_id, $view, $options) {
+  if ($vss_id == 'front_page_slideshow-block_1') {
+    return l(t('Next picture'), '#', array(
+      'attributes' => array(
+        'class' => 'views_slideshow_singleframe_next views_slideshow_next',
+        'id' => "views_slideshow_singleframe_next_" . $vss_id,
+      ),
+      'fragment' => ' ',
+      'external' => TRUE,
+    ));
+  }
+
+  return l(t('Next'), '#', array(
+    'attributes' => array(
+      'class' => 'views_slideshow_singleframe_next views_slideshow_next',
+      'id' => "views_slideshow_singleframe_next_" . $vss_id,
+    ),
+    'fragment' => ' ',
+    'external' => TRUE,
+  ));
+}
