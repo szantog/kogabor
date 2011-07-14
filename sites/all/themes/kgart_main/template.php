@@ -166,14 +166,14 @@ function kgart_main_preprocess_block(&$vars, $hook) {
  */
 function kgart_main_views_slideshow_singleframe_control_previous($vss_id, $view, $options) {
   if ($vss_id == 'front_page_slideshow-block_1') {
-    return l(t('Previous picture'), '#', array(
-      'attributes' => array(
-        'class' => 'views_slideshow_singleframe_previous views_slideshow_previous',
-        'id' => "views_slideshow_singleframe_prev_" . $vss_id,
-      ),
-      'fragment' => ' ',
-      'external' => TRUE,
-    ));
+  return l(t('Previous picture'), '#', array(
+    'attributes' => array(
+      'class' => 'views_slideshow_singleframe_previous views_slideshow_previous',
+      'id' => "views_slideshow_singleframe_prev_" . $vss_id,
+    ),
+    'fragment' => ' ',
+    'external' => TRUE,
+  ));
   }
   return l(t('Previous'), '#', array(
     'attributes' => array(
