@@ -19,13 +19,13 @@
  *   this, we have to override the theme function. You have to first find the
  *   theme function that generates the output, and then "catch" it and modify it
  *   here. The easiest way to do it is to copy the original function in its
- *   entirety and paste it here, changing the prefix from theme_ to zen_less_css_base_theme_.
+ *   entirety and paste it here, changing the prefix from theme_ to kgart_main_.
  *   For example:
  *
  *     original: theme_breadcrumb()
- *     theme override: zen_less_css_base_theme_breadcrumb()
+ *     theme override: kgart_main_breadcrumb()
  *
- *   where zen_less_css_base_theme is the name of your sub-theme. For example, the
+ *   where kgart_main is the name of your sub-theme. For example, the
  *   zen_classic theme would define a zen_classic_breadcrumb() function.
  *
  *   If you would like to override any of the theme functions used in Zen core,
@@ -68,7 +68,7 @@ if (!module_exists('less')){
 /**
  * Implementation of HOOK_theme().
  */
-function zen_less_css_base_theme_theme(&$existing, $type, $theme, $path) {
+function kgart_main_theme(&$existing, $type, $theme, $path) {
   $hooks = zen_theme($existing, $type, $theme, $path);
   // Add your theme hooks like this:
   /*
@@ -87,7 +87,7 @@ function zen_less_css_base_theme_theme(&$existing, $type, $theme, $path) {
  *   The name of the template being rendered (name of the .tpl.php file.)
  */
 /* -- Delete this line if you want to use this function
-function zen_less_css_base_theme_preprocess(&$vars, $hook) {
+function kgart_main_preprocess(&$vars, $hook) {
   $vars['sample_variable'] = t('Lorem ipsum.');
 }
 // */
@@ -101,7 +101,7 @@ function zen_less_css_base_theme_preprocess(&$vars, $hook) {
  *   The name of the template being rendered ("page" in this case.)
  */
 /* -- Delete this line if you want to use this function
-function zen_less_css_base_theme_preprocess_page(&$vars, $hook) {
+function kgart_main_preprocess_page(&$vars, $hook) {
   $vars['sample_variable'] = t('Lorem ipsum.');
 
   // To remove a class from $classes_array, use array_diff().
@@ -118,11 +118,11 @@ function zen_less_css_base_theme_preprocess_page(&$vars, $hook) {
  *   The name of the template being rendered ("node" in this case.)
  */
 /* -- Delete this line if you want to use this function
-function zen_less_css_base_theme_preprocess_node(&$vars, $hook) {
+function kgart_main_preprocess_node(&$vars, $hook) {
   $vars['sample_variable'] = t('Lorem ipsum.');
 
   // Optionally, run node-type-specific preprocess functions, like
-  // zen_less_css_base_theme_preprocess_node_page() or zen_less_css_base_theme_preprocess_node_story().
+  // kgart_main_preprocess_node_page() or kgart_main_preprocess_node_story().
   $function = __FUNCTION__ . '_' . $vars['node']->type;
   if (function_exists($function)) {
     $function($vars, $hook);
@@ -139,7 +139,7 @@ function zen_less_css_base_theme_preprocess_node(&$vars, $hook) {
  *   The name of the template being rendered ("comment" in this case.)
  */
 /* -- Delete this line if you want to use this function
-function zen_less_css_base_theme_preprocess_comment(&$vars, $hook) {
+function kgart_main_preprocess_comment(&$vars, $hook) {
   $vars['sample_variable'] = t('Lorem ipsum.');
 }
 // */
@@ -153,7 +153,7 @@ function zen_less_css_base_theme_preprocess_comment(&$vars, $hook) {
  *   The name of the template being rendered ("block" in this case.)
  */
 /* -- Delete this line if you want to use this function
-function zen_less_css_base_theme_preprocess_block(&$vars, $hook) {
+function kgart_main_preprocess_block(&$vars, $hook) {
   $vars['sample_variable'] = t('Lorem ipsum.');
 }
 // */

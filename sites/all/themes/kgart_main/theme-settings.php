@@ -11,10 +11,10 @@ include_once './' . drupal_get_path('theme', 'zen') . '/theme-settings.php';
  * @return
  *   A form array.
  */
-function zen_less_css_base_theme_settings($saved_settings) {
+function kgart_main_settings($saved_settings) {
 
   // Get the default values from the .info file.
-  $defaults = zen_theme_get_default_settings('zen_less_css_base_theme');
+  $defaults = zen_theme_get_default_settings('kgart_main');
 
   // Merge the saved variables and their default values.
   $settings = array_merge($defaults, $saved_settings);
@@ -24,10 +24,10 @@ function zen_less_css_base_theme_settings($saved_settings) {
    */
   $form = array();
   /* -- Delete this line if you want to use this setting
-  $form['zen_less_css_base_theme_example'] = array(
+  $form['kgart_main_example'] = array(
     '#type'          => 'checkbox',
     '#title'         => t('Use this sample setting'),
-    '#default_value' => $settings['zen_less_css_base_theme_example'],
+    '#default_value' => $settings['kgart_main_example'],
     '#description'   => t("This option doesn't do anything; it's just an example."),
   );
   // */
