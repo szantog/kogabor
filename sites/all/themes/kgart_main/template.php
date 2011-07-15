@@ -101,6 +101,17 @@ function kgart_main_preprocess(&$vars, $hook) {
  *   The name of the template being rendered ("page" in this case.)
  */
 
+function kgart_main_preprocess_page(&$vars, $hook) {
+  if ($vars['node']) {
+    $node = $vars['node'];
+  }
+  //If a node type need to hide the original h1 title, put this in this array
+  $hidetitle = array(
+    'art',
+  );
+  if (in_array($node->type, $hidetitle)){
+    $vars['hidetitle'] = TRUE;
+  }
   // To remove a class from $classes_array, use array_diff().
   //$vars['classes_array'] = array_diff($vars['classes_array'], array('class-to-remove'));
 }
