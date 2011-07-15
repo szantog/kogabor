@@ -1,0 +1,12 @@
+<?php
+
+/**
+ * @file
+ *   kgart_hooks.module
+ *   Customizations by hooks for _non_ admin pages
+ *    Project: Young Element
+ *
+ * @author
+ *    Gabor Szanto <http://drupal.org/user/610310>
+ *
+ */

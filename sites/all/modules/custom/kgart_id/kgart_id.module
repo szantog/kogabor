@@ -8,7 +8,7 @@
  * Like: art-000001
  *
  * @author
- *    Gabor Szanto <http://drupal.org/user/610310>*
+ *    Gabor Szanto <http://drupal.org/user/610310>
  */
 
 define('ART_PRE', 'ART-');
