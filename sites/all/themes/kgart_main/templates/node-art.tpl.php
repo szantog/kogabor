@@ -73,14 +73,14 @@
 ?>
 <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix">
   <?php if ($my_print_link || $slide || $service_links_rendered): ?>
-    <div class="clearfix">
+    <div class="clearfix toplinks">
       <?php if ($my_print_link || $slide): ?>
-        <div class="left">
+        <div class="left no-marding">
           <?php print $my_print_link . ' | ' . $slide; ?>
         </div>
       <?php endif; ?>
       <?php if ($my_print_link || $slide): ?>
-      <div class="right">
+      <div class="right no-marding">
         <?php print $service_links_rendered; ?>
       </div>
       <?php endif; ?>
