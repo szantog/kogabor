@@ -37,11 +37,11 @@
  */
 ?>
 <div id="comments" class="<?php print $classes; ?>">
-  <?php if ($node->type != 'forum'): ?>
-    <h2 class="title"><?php print t('Comments'); ?></h2>
-  <?php endif; ?>
   <?php
    print $form;
   ?>
+  <?php if ($node->type != 'forum'): ?>
+    <h2 class="title"><?php print t('Oponions'); ?></h2>
+  <?php endif; ?>
   <?php print $content; ?>
 </div>
