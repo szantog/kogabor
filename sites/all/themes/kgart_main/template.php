@@ -229,3 +229,12 @@ function kgart_main_views_slideshow_singleframe_control_next($vss_id, $view, $op
     'external' => TRUE,
   ));
 }
+
+/*
+ * Override comment box title
+ */
+function kgart_main_preprocess_box(&$vars) {
+  if ($vars['id'] == 2) {
+    $vars['title'] = t('Send oponion');
+  }
+}
