@@ -52,19 +52,7 @@
  * @see zen_process()
  */
 ?>
-<div class="<?php print $classes; ?> clearfix">
-  <?php print $picture; ?>
-
-  <?php if ($title): ?>
-    <h3 class="title">
-      <?php print $title; ?>
-      <?php if ($new): ?>
-        <span class="new"><?php print $new; ?></span>
-      <?php endif; ?>
-    </h3>
-  <?php elseif ($new): ?>
-    <div class="new"><?php print $new; ?></div>
-  <?php endif; ?>
+<div class="<?php print $classes; ?> clearfix m-top m-bottom">
 
   <?php if ($unpublished): ?>
     <div class="unpublished"><?php print t('Unpublished'); ?></div>
@@ -72,19 +60,13 @@
 
   <div class="submitted">
     <?php
-      print t('Submitted by !username on !datetime.',
-        array('!username' => $author, '!datetime' => $created));
+      print $author . ' | ' . $created;
     ?>
   </div>
 
   <div class="content">
     <?php print $content; ?>
-    <?php if ($signature): ?>
-      <div class="user-signature clearfix">
-        <?php print $signature; ?>
-      </div>
-    <?php endif; ?>
   </div>
 
-  <?php print $links; ?>
+  <?php //print $links; ?>
 </div><!-- /.comment -->
