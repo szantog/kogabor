@@ -18,9 +18,13 @@ function kgart_hooks_form_comment_form_alter(&$form, &$form_state) {
   unset($form['homepage']);
   unset($form['subject']);
   unset($form['preview']);
+  unset($form['name']['#default_value']);
+  unset($form['comment_filter']['format']['format']['guidelines']);
+  unset($form['comment_filter']['format'][2]);
   $form['name']['#required'] = TRUE;
+  $form['submit']['#value'] = t('Go!');
   $form['comment_filter']['comment']['#title'] = t('Text of opinion');
   $form['comment_filter']['comment']['#description'] = t('fields marked with * is required');
   $form['comment_filter']['comment']['#rows'] = 5;
-  //dsm($form);
+  dsm($form);
 }
