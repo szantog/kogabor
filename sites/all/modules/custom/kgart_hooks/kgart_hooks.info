@@ -1,0 +1,6 @@
+name = kgart_hooks
+description = Customizations by hooks for _non_ admin pages
+package = kogabor
+core = 6.x
+
+dependencies[] = comment

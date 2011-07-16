@@ -100,10 +100,18 @@ function kgart_main_preprocess(&$vars, $hook) {
  * @param $hook
  *   The name of the template being rendered ("page" in this case.)
  */
-/* -- Delete this line if you want to use this function
-function kgart_main_preprocess_page(&$vars, $hook) {
-  $vars['sample_variable'] = t('Lorem ipsum.');
 
+function kgart_main_preprocess_page(&$vars, $hook) {
+  if ($vars['node']) {
+    $node = $vars['node'];
+  }
+  //If a node type need to hide the original h1 title, put this in this array
+  $hidetitle = array(
+    'art',
+  );
+  if (in_array($node->type, $hidetitle)){
+    $vars['hidetitle'] = TRUE;
+  }
   // To remove a class from $classes_array, use array_diff().
   //$vars['classes_array'] = array_diff($vars['classes_array'], array('class-to-remove'));
 }
@@ -117,16 +125,25 @@ function kgart_main_preprocess_page(&$vars, $hook) {
  * @param $hook
  *   The name of the template being rendered ("node" in this case.)
  */
-/* -- Delete this line if you want to use this function
-function kgart_main_preprocess_node(&$vars, $hook) {
-  $vars['sample_variable'] = t('Lorem ipsum.');
 
+function kgart_main_preprocess_node(&$vars, $hook) {
+  $node = $vars['node'];
+  $vars['my_print_link'] = l(t('Print'), "node/$node->nid/print");
   // Optionally, run node-type-specific preprocess functions, like
   // kgart_main_preprocess_node_page() or kgart_main_preprocess_node_story().
   $function = __FUNCTION__ . '_' . $vars['node']->type;
   if (function_exists($function)) {
     $function($vars, $hook);
   }
+}
+
+
+function  kgart_main_preprocess_node_art(&$vars) {
+  $node = $vars['node'];
+  $vars['my_print_link'] = l(t('Print'), "node/$node->nid/print");
+  $vars['slide'] = l(t('Start slideshow'), "node/$node->nid/slide");
+  //$vars['service_links_rendered'] = 'service_links tmp disabled';
+  //dsm(get_defined_vars());
 }
 // */
 

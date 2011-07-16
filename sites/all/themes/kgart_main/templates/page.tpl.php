@@ -170,7 +170,7 @@
 
         <?php print $breadcrumb; ?>
         <?php if ($title): ?>
-          <h1 class="title"><?php print $title; ?></h1>
+          <h1 class="<?php if ($hidetitle) : print 'element-invisible '; endif;?>title"><?php print $title; ?></h1>
         <?php endif; ?>
         <?php print $messages; ?>
         <?php if ($tabs): ?>
