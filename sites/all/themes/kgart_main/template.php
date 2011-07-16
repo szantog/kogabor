@@ -143,7 +143,7 @@ function  kgart_main_preprocess_node_art(&$vars) {
   $vars['my_print_link'] = l(t('Print'), "node/$node->nid/print");
   $vars['slide'] = l(t('Start slideshow'), "node/$node->nid/slide");
   //$vars['service_links_rendered'] = 'service_links tmp disabled';
-  dsm(get_defined_vars());
+  //dsm(get_defined_vars());
 }
 // */
 

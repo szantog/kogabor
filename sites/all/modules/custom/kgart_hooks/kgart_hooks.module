@@ -10,3 +10,17 @@
  *    Gabor Szanto <http://drupal.org/user/610310>
  *
  */
+
+/**
+ * Implementation of hook_form_comment_form_alter().
+ */
+function kgart_hooks_form_comment_form_alter(&$form, &$form_state) {
+  unset($form['homepage']);
+  unset($form['subject']);
+  unset($form['preview']);
+  $form['name']['#required'] = TRUE;
+  $form['comment_filter']['comment']['#title'] = t('Text of opinion');
+  $form['comment_filter']['comment']['#description'] = t('fields marked with * is required');
+  $form['comment_filter']['comment']['#rows'] = 5;
+  //dsm($form);
+}

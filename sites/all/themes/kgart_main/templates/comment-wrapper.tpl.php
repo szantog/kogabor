@@ -40,6 +40,8 @@
   <?php if ($node->type != 'forum'): ?>
     <h2 class="title"><?php print t('Comments'); ?></h2>
   <?php endif; ?>
-
+  <?php
+   print $form;
+  ?>
   <?php print $content; ?>
 </div>
