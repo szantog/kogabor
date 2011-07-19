@@ -178,13 +178,22 @@
         <?php endif; ?>
         <?php print $help; ?>
 
-        <?php print $content_top; ?>
-
-        <?php if ($service_links_rendered): ?>
-        <div id="service-links-wrapper">
-          <?php print $service_links_rendered; ?>
-        </div>
+        <?php if ($my_print_link || $slide || $addthiswidget): ?>
+          <div class="clearfix toplinks"><div class="section">
+            <?php if ($my_print_link || $slide): ?>
+              <div class="left no-marding">
+                <?php print $my_print_link . ' | ' . $slide; ?>
+              </div>
+            <?php endif; ?>
+            <?php if ($my_print_link || $slide): ?>
+            <div class="right no-marding">
+              <?php print $addthiswidget; ?>
+            </div>
+            <?php endif; ?>
+          </div></div>
         <?php endif; ?>
+
+        <?php print $content_top; ?>
 
         <div id="content-area"><div class="section">
           <?php print $content; ?>
