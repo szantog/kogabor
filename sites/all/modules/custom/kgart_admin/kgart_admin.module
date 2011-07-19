@@ -249,11 +249,11 @@ function kgart_admin_check_year($form, &$form_state) {
  */
 function kgart_admin_check_promote($form, &$form_state) {
   $languages = language_list();
-  if ($form_state['values']['promote'] == 1 && $form_state['values']['field_exhibition_lead'][0]['value'] == '') {
+  if ($form_state['values']['promote'] == 1 && strlen(drupal_html_to_text($form_state['values']['field_exhibition_lead'][0]['value'])) < 10) {
     form_set_error('field_exhibition_lead][0][value', t('If content is promoted to front page, the field lead is required'));
   }
   foreach ($languages as $key => $value) {
-    if ($form_state['values']['promote'] == 1 && isset($form_state['values']["field_exhibition_lead_$key"]) && $form_state['values']["field_exhibition_lead_$key"][0]['value'] == '') {
+    if ($form_state['values']['promote'] == 1 && isset($form_state['values']["field_exhibition_lead_$key"]) && strlen(drupal_html_to_text($form_state['values']["field_exhibition_lead_$key"][0]['value'])) < 10) {
       form_set_error("field_exhibition_lead_$key][0][value", t('If content is promoted to front page, the field Lead is required'));
     }
   }
