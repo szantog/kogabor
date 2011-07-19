@@ -118,7 +118,7 @@ function kgart_main_preprocess_page(&$vars, $hook) {
       $vars['service_links_rendered'] = theme('links', service_links_render($vars['node'], TRUE));
     }
   }
-  dsm(get_defined_vars());
+  //dsm(get_defined_vars());
   // To remove a class from $classes_array, use array_diff().
   //$vars['classes_array'] = array_diff($vars['classes_array'], array('class-to-remove'));
 }
