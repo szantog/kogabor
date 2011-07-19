@@ -11,7 +11,7 @@
  *    Gabor Szanto <http://drupal.org/user/610310>
  */
 
-define('ART_PRE', 'ART-');
+define('ART_PRE', '');
 define('ARTIST_PRE', 'ARS-');
 define('CITY_PRE', 'CTY-');
 define('COLLECTION_PRE', 'COL-');

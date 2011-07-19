@@ -96,13 +96,17 @@ function kgart_admin_form_alter(&$form, $form_state, $form_id) {
 
     //Add nid to node forms
     $id_field = 'field_' . $type .'_id';
-    if ($node->field_id[0]['value']) {
+    if ($node->field_art_id[0]['value']) {
+      $id_value = $node->field_art_id[0]['value'];
+    }
+    else if ($node->field_id[0]['value']) {
       $id_value = $node->field_id[0]['value'];
     }
     else {
       $id_array = kgart_id_get_constant($type);
       $id_value = $id_array['pre'];
     }
+
     $form['show_nid'] = array (
       '#prefix' => '<div id="show-nid" class="form-item">',
       '#suffix' => '</div>',
