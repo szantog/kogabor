@@ -26,5 +26,4 @@ function kgart_hooks_form_comment_form_alter(&$form, &$form_state) {
   $form['comment_filter']['comment']['#title'] = t('Text of opinion');
   $form['comment_filter']['comment']['#description'] = t('fields marked with * is required');
   $form['comment_filter']['comment']['#rows'] = 5;
-  dsm($form);
 }
