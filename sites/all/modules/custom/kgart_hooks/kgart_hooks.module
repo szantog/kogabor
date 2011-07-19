@@ -12,6 +12,23 @@
  */
 
 /**
+ * Implementation of hook_form_alter().
+ */
+function kgart_hooks_form_alter(&$form, $form_state, $form_id) {
+  if ($form_id == 'views_exposed_form') {
+    if (isset($form['field_art_artist_nid'])) {
+      $form['field_art_artist_nid'] = kgart_api_change_exposed_title($form['field_art_artist_nid'], $form['#info']['filter-field_art_artist_nid']['label']);
+    }
+    if (isset($form['field_art_technique_nid'])) {
+      $form['field_art_technique_nid'] = kgart_api_change_exposed_title($form['field_art_technique_nid'], $form['#info']['filter-field_art_technique_nid']['label']);
+    }
+    if (isset($form['field_art_material_nid'])) {
+      $form['field_art_material_nid'] = kgart_api_change_exposed_title($form['field_art_material_nid'], $form['#info']['filter-field_art_material_nid']['label']);
+    }
+    dsm(get_defined_vars());
+  }
+}
+/**
  * Implementation of hook_form_comment_form_alter().
  */
 function kgart_hooks_form_comment_form_alter(&$form, &$form_state) {
