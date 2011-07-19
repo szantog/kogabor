@@ -73,3 +73,26 @@ function kgart_api_inc_serial($value, $number = 6) {
   }
   return $value;
 }
+
+/*
+ * Helper function to change form element options first option title
+ *
+ * @param $element
+ *   an array of form element, within options;
+ * @param $title
+ *   optional, string, contains the new first option title
+ */
+function kgart_api_change_exposed_title(&$element, $title = NULL) {
+  if (isset($element['#options'])) {
+    reset($element['#options']);
+
+    $first_key = key($element['#options']);
+    if ($title) {
+      $element['#options'][$first_key] = $title;
+    }
+    else {
+      $element['#options'][$first_key] = $element['#title'];
+    }
+  }
+  return $element;
+}
