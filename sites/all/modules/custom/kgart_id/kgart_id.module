@@ -30,22 +30,22 @@ define('TECHNIQUE_PRE', 'TEC-');
 define('FP_SLIDESHOW_PRE', 'FPS-');
 
 define('ART_TRIM', 6);
-define('ARTIST_TRIM', 3);
-define('CITY_TRIM', 3);
-define('COLLECTION_TRIM', 3);
-define('COUNTRY_TRIM', 3);
-define('EXHIBITION_TRIM', 3);
-define('SMARTGALLERY_TRIM', 3);
-define('GALLERY_TRIM', 3);
-define('MATERIAL_TRIM', 3);
-define('MUSEUM_TRIM', 3);
-define('OWNER_TRIM', 3);
-define('PICTURE_TRIM', 3);
-define('PROGRESS_TRIM', 3);
-define('SIGN_TRIM', 3);
-define('STORAGE_TRIM', 3);
-define('TECHNIQUE_TRIM', 3);
-define('FP_SLIDESHOW_TRIM', 3);
+define('ARTIST_TRIM', 4);
+define('CITY_TRIM', 4);
+define('COLLECTION_TRIM', 4);
+define('COUNTRY_TRIM', 4);
+define('EXHIBITION_TRIM', 4);
+define('SMARTGALLERY_TRIM', 4);
+define('GALLERY_TRIM', 4);
+define('MATERIAL_TRIM', 4);
+define('MUSEUM_TRIM', 4);
+define('OWNER_TRIM', 4);
+define('PICTURE_TRIM', 4);
+define('PROGRESS_TRIM', 4);
+define('SIGN_TRIM', 4);
+define('STORAGE_TRIM', 4);
+define('TECHNIQUE_TRIM', 4);
+define('FP_SLIDESHOW_TRIM', 4);
 
 /*
  * The main function of this module, this is used automatic in field_id computed field
