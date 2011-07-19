@@ -112,6 +112,13 @@ function kgart_main_preprocess_page(&$vars, $hook) {
   if (in_array($node->type, $hidetitle)){
     $vars['hidetitle'] = TRUE;
   }
+  if (module_exists('service_links') && $vars['is_front']) {
+    // Work also for not-node pages
+    if (user_access('access service links')) {
+      $vars['service_links_rendered'] = theme('links', service_links_render($vars['node'], TRUE));
+    }
+  }
+  dsm(get_defined_vars());
   // To remove a class from $classes_array, use array_diff().
   //$vars['classes_array'] = array_diff($vars['classes_array'], array('class-to-remove'));
 }

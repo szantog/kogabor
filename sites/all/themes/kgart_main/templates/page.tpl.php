@@ -180,7 +180,13 @@
 
         <?php print $content_top; ?>
 
-          <div id="content-area"><div class="section">
+        <?php if ($service_links_rendered): ?>
+        <div id="service-links-wrapper">
+          <?php print $service_links_rendered; ?>
+        </div>
+        <?php endif; ?>
+
+        <div id="content-area"><div class="section">
           <?php print $content; ?>
         </div></div>
 
