@@ -169,7 +169,7 @@
         <?php print $highlight; ?>
 
         <?php print $breadcrumb; ?>
-        <?php if ($title || !$hidetitle): ?>
+        <?php if ($title && !$hidetitle): ?>
           <h1 class="title"><?php print $title; ?></h1>
         <?php endif; ?>
         <?php print $messages; ?>
