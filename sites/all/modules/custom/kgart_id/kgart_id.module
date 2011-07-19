@@ -30,28 +30,35 @@ define('TECHNIQUE_PRE', 'TEC-');
 define('FP_SLIDESHOW_PRE', 'FPS-');
 
 define('ART_TRIM', 6);
-define('ARTIST_TRIM', 6);
-define('CITY_TRIM', 6);
-define('COLLECTION_TRIM', 6);
-define('COUNTRY_TRIM', 6);
-define('EXHIBITION_TRIM', 6);
-define('SMARTGALLERY_TRIM', 6);
-define('GALLERY_TRIM', 6);
-define('MATERIAL_TRIM', 6);
-define('MUSEUM_TRIM', 6);
-define('OWNER_TRIM', 6);
-define('PICTURE_TRIM', 6);
-define('PROGRESS_TRIM', 6);
-define('SIGN_TRIM', 6);
-define('STORAGE_TRIM', 6);
-define('TECHNIQUE_TRIM', 6);
-define('FP_SLIDESHOW_TRIM', 6);
+define('ARTIST_TRIM', 3);
+define('CITY_TRIM', 3);
+define('COLLECTION_TRIM', 3);
+define('COUNTRY_TRIM', 3);
+define('EXHIBITION_TRIM', 3);
+define('SMARTGALLERY_TRIM', 3);
+define('GALLERY_TRIM', 3);
+define('MATERIAL_TRIM', 3);
+define('MUSEUM_TRIM', 3);
+define('OWNER_TRIM', 3);
+define('PICTURE_TRIM', 3);
+define('PROGRESS_TRIM', 3);
+define('SIGN_TRIM', 3);
+define('STORAGE_TRIM', 3);
+define('TECHNIQUE_TRIM', 3);
+define('FP_SLIDESHOW_TRIM', 3);
 
 /*
  * The main function of this module, this is used automatic in field_id computed field
  */
 function computed_field_field_id_compute($node, $field, &$node_field) {
   $node_field[0]['value'] = kgart_id_generate_id($node);
+}
+
+/*
+ * We need special ID field for nodetype art, only 6 digit autoinc number
+ */
+function computed_field_field_art_id_compute($node, $field, &$node_field) {
+  $node_field[0]['value'] = kgart_id_inc_serial($node->field_art_serial[0]['value']);
 }
 
 /*
