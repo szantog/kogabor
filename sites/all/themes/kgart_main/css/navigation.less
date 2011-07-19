@@ -21,17 +21,34 @@ li a.active {
   background: url(../images/navigation.png) repeat-x;
   border-top: 1px solid @border-color3;
 
+  .block {
+    .no-marding;
+  }
   .section {
     .p-left(155px);
   }
-  li {
-    .no-padding;
+
+  ul.nice-menu-down li {
+    border: none;
   }
 
-  a {
-    color: #fff;
-    line-height: 25px;
-    padding: 0 10px;
+  ul.nice-menu li {
+    border: none;
+    background: none;
+
+    a {
+      color: #fff;
+      line-height: 25px;
+      padding: 0 10px;
+    }
+
+    ul {
+      top: 28px;
+
+      li {
+        background: url(../images/navigation.png) repeat-x;
+      }
+    }
   }
 }
 
