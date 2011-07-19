@@ -25,8 +25,11 @@ function kgart_hooks_form_alter(&$form, $form_state, $form_id) {
     if (isset($form['field_art_material_nid'])) {
       $form['field_art_material_nid'] = kgart_api_change_exposed_title($form['field_art_material_nid'], $form['#info']['filter-field_art_material_nid']['label']);
     }
-    dsm(get_defined_vars());
+    $form['submit']['#value'] = t('Search');
+    $form['reset']['#value'] = '<input '. drupal_attributes(array('id' => 'edit-reset', 'type' => 'button', 'value' => t('Reset fields'), 'class' => 'form-submit')) .' />';
+    //dsm(get_defined_vars());
   }
+
 }
 /**
  * Implementation of hook_form_comment_form_alter().
