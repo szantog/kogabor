@@ -1,5 +1,4 @@
 <?php
-// $Id: addthis_handler_field.inc,v 1.1.2.2 2010/12/13 07:26:29 lesmana Exp $
 
 /**
  * @file

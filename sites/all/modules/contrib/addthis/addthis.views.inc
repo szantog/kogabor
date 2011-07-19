@@ -1,5 +1,4 @@
 <?php
-// $Id: addthis.views.inc,v 1.1.2.1.2.1 2010/07/30 12:58:14 wesku Exp $
 
 /**
  * @file

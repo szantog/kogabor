@@ -1,5 +1,4 @@
 <?php
-// $Id: addthis.module,v 1.13.2.23.2.12 2011/01/31 03:39:07 lesmana Exp $
 
 /**
  * @file
@@ -244,6 +243,13 @@ function addthis_addthis_toolbox_services() {
     ),
     'more' => array(
       'class' => 'addthis_button_expanded',
+    ),
+    'share_compact' => array(
+      'class' => 'addthis_button_compact',
+      'title' => t('Share'),
+    ),
+    'compact' => array(
+      'class' => 'addthis_button_compact',
     ),
     'counter' => array(
       'class' => 'addthis_counter',

@@ -1,5 +1,4 @@
 <?php
-// $Id: addthis.admin.inc,v 1.1.2.10.2.7 2011/01/31 03:39:07 lesmana Exp $
 
 /**
  * @file
