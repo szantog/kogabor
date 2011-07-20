@@ -102,9 +102,12 @@ function kgart_main_preprocess(&$vars, $hook) {
  */
 
 function kgart_main_preprocess_page(&$vars, $hook) {
+  dsm(get_defined_vars());
   if ($vars['node']) {
     $node = $vars['node'];
   }
+  // The toplinks will printed before the content, it contains backlinks, print link, etc..
+  $toplinks = array();
   //If a node type need to hide the original h1 title, put this in this array
   $hidetitle = array(
     'art',
@@ -112,17 +115,22 @@ function kgart_main_preprocess_page(&$vars, $hook) {
   if (in_array($node->type, $hidetitle)){
     $vars['hidetitle'] = TRUE;
   }
+
+  //This section create the addthis links
   if (module_exists('addthis') && $node->type == 'art') {
     // Work also for not-node pages
     $addthis_widget_type = variable_get('addthis_widget_type', 'addthis_button');
     $vars['addthiswidget'] = theme($addthis_widget_type);
   }
   if ($node->type == 'art') {
-    $vars['my_print_link'] = l(t('Print'), "node/$node->nid/print");
-    $vars['slide'] = l(t('Start slideshow'), "node/$node->nid/slide");
+    $toplinks[] = l(t('Print'), "node/$node->nid/print");
+    $toplinks[] = l(t('Start slideshow'), "node/$node->nid/slide");
   }
 
-  //dsm(get_defined_vars());
+  if (!empty($toplinks)) {
+    $vars['toplinks'] = theme('item_list', $toplinks);
+  }
+  dsm(get_defined_vars());
   // To remove a class from $classes_array, use array_diff().
   //$vars['classes_array'] = array_diff($vars['classes_array'], array('class-to-remove'));
 }

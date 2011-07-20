@@ -178,14 +178,14 @@
         <?php endif; ?>
         <?php print $help; ?>
 
-        <?php if ($my_print_link || $slide || $addthiswidget): ?>
+        <?php if ($toplinks || $addthiswidget): ?>
           <div class="clearfix toplinks"><div class="section">
-            <?php if ($my_print_link || $slide): ?>
+            <?php if ($toplinks): ?>
               <div class="left no-marding">
-                <?php print $my_print_link . ' | ' . $slide; ?>
+                <?php print $toplinks; ?>
               </div>
             <?php endif; ?>
-            <?php if ($my_print_link || $slide): ?>
+            <?php if ($addthiswidget): ?>
             <div class="right no-marding">
               <?php print $addthiswidget; ?>
             </div>
