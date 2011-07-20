@@ -60,6 +60,8 @@
  *   and http://drupal.org/node/190815#template-suggestions
  */
 
+//test for commit
+
 /* Set message, if less module doesn't exist. */
 if (!module_exists('less')){
   drupal_set_message(t('The module <a href="http://drupal.org/project/less">less</a> doesn\'t exist. Download, and enable it"'), 'warning');
