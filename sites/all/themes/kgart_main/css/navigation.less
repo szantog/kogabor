@@ -40,6 +40,8 @@ li a.active {
     li {
       border: none;
       background: none;
+      width: auto;
+      padding: 0;
     }
     //This should be same as a &:hover
     .over a {
@@ -56,7 +58,7 @@ li a.active {
       padding: 0 10px;
       height: 29px;
       text-decoration: underline;
-
+      white-space: nowrap;
       &:hover {
         background: url(../images/navigation-li-hover.png) repeat-x;
         border-top: 1px solid #faf7eb;
@@ -70,7 +72,7 @@ li a.active {
       top: 28px;
 
       li {
-
+        width: auto;
         a {
           background: url(../images/navigation-li-hover.png) repeat-x;
           border-top: 1px solid #faf7eb;
