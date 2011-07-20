@@ -27,26 +27,64 @@ li a.active {
   .section {
     .p-left(155px);
   }
+  ul {
+    border: none;
+  }
 
   ul.nice-menu-down li {
     border: none;
   }
 
-  ul.nice-menu li {
-    border: none;
-    background: none;
+  ul.nice-menu {
+
+    li {
+      border: none;
+      background: none;
+    }
+    //This should be same as a &:hover
+    .over a {
+      background: url(../images/navigation-li-hover.png) repeat-x;
+      border-top: 1px solid #faf7eb;
+      padding: 2px 10px 0;
+      margin-top: -2px;
+      color: #161618;
+    }
 
     a {
       color: #fff;
       line-height: 25px;
       padding: 0 10px;
+      height: 29px;
+      text-decoration: underline;
+
+      &:hover {
+        background: url(../images/navigation-li-hover.png) repeat-x;
+        border-top: 1px solid #faf7eb;
+        padding: 2px 10px 0;
+        margin-top: -2px;
+        color: #161618;
+      }
     }
 
-    ul {
+    .menuparent ul {
       top: 28px;
 
       li {
-        background: url(../images/navigation.png) repeat-x;
+
+        a {
+          background: url(../images/navigation.png) repeat-x ;
+          border-top: 1px solid @border-color3;
+          color: #fff;
+          line-height: 24px;
+          height: auto;
+          &:hover {
+            background: url(../images/navigation-li-hover.png) repeat-x;
+            border-top: 1px solid #faf7eb;
+            color: #161618;
+            margin-top: 0;
+            padding: 0 10px;
+          }
+        }
       }
     }
   }

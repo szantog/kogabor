@@ -112,7 +112,7 @@ function kgart_main_preprocess_page(&$vars, $hook) {
   if (in_array($node->type, $hidetitle)){
     $vars['hidetitle'] = TRUE;
   }
-  if (module_exists('addthis') && ($vars['is_front'] || $node->type == 'art')) {
+  if (module_exists('addthis') && (!$vars['is_front'] || $node->type == 'art')) {
     // Work also for not-node pages
     $addthis_widget_type = variable_get('addthis_widget_type', 'addthis_button');
     $vars['addthiswidget'] = theme($addthis_widget_type);
