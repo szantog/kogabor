@@ -116,6 +116,10 @@ function kgart_main_preprocess_page(&$vars, $hook) {
     $vars['hidetitle'] = TRUE;
   }
 
+  if (!$vars['is_front']) {
+    $toplinks[] = '<a class="form-button form-btn form-button-cancel" rel="nofollow" href="javascript: history.go(-1)" title="' . t('Back') .'" alt="' . t('Back') .'">' . t('Back') . '</a>';
+  }
+
   //This section create the addthis links
   if (module_exists('addthis') && $node->type == 'art') {
     // Work also for not-node pages
