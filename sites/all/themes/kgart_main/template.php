@@ -102,7 +102,6 @@ function kgart_main_preprocess(&$vars, $hook) {
  */
 
 function kgart_main_preprocess_page(&$vars, $hook) {
-  dsm(get_defined_vars());
   if ($vars['node']) {
     $node = $vars['node'];
   }
@@ -134,7 +133,7 @@ function kgart_main_preprocess_page(&$vars, $hook) {
   if (!empty($toplinks)) {
     $vars['toplinks'] = theme('item_list', $toplinks);
   }
-  dsm(get_defined_vars());
+  //dsm(get_defined_vars());
   // To remove a class from $classes_array, use array_diff().
   //$vars['classes_array'] = array_diff($vars['classes_array'], array('class-to-remove'));
 }

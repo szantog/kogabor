@@ -283,7 +283,29 @@ ul.links li {
 
 .toplinks {
   margin: 14px 14px 0 14px;
-  padding: 10px 10px 6px 0;
+  padding: 10px 10px 6px 10px;
+
+  ul {
+    .no-marding;
+  }
+
+  li {
+    .no-marding;
+    list-style: none !important;
+    .left(0);
+
+    &:after {
+      content: " | ";
+      .m-right(6px);
+    }
+    &.last:after {
+      content: "";
+    }
+  }
+}
+
+.addthis_toolbox {
+  //min-width: 200px;
 }
 
 .addthis_button_compact {
